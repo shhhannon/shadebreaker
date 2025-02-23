@@ -1,15 +1,16 @@
 from settings import *
+from os.path import join
 from states.state import State
 from game.timer import Timer
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, groups, collision_sprites) :
         super().__init__(groups)
-        self.image = pygame.Surface((48,56)) 
-        self.image.fill('pink')
+        self.image = pygame.image.load(join('..', 'shadebreaker', 'graphics', 'player', 'idle', '0.png'))
 
         # rects
-        self.rect = self.image.get_frect(topleft = pos) 
+        self.rect = self.image.get_frect(topleft = pos)
+        self.hitbox_rect = self.rect.inflate(-32, -14)
         self.old_rect = self.rect.copy()
 
         #movement
