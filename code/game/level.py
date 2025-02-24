@@ -2,6 +2,7 @@ from settings import *
 from game.sprites import Sprite, AnimatedSprite
 from game.player import Player
 from game.groups import AllSprites
+from game.enemies import Goblin
 
 class Level:
     def __init__(self, tmx_map, level_frames, game):
@@ -10,6 +11,8 @@ class Level:
         # groups
         self.all_sprites = AllSprites()
         self.collision_sprites = pygame.sprite.Group()
+        self.damage_sprites = pygame.sprite.Group()
+        self.goblin_sprites = pygame.sprite.Group()
 
         self.setup(tmx_map, level_frames)
 
@@ -35,6 +38,11 @@ class Level:
                     frames = level_frames['player'])
             else:
                 Sprite((obj.x, obj.y), obj.image, (self.all_sprites, self.collision_sprites))
+
+        # enemies
+        for obj in tmx_map.get_layer_by_name('enemies'):
+            if obj.name == 'goblin':
+                Goblin((obj.x, obj.y), level_frames['goblin'], (self.all_sprites, self.damage_sprites, self.goblin_sprites), self.collision_sprites)
 
     def update(self, dt):
         self.all_sprites.update(dt)

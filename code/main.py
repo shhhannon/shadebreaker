@@ -2,13 +2,12 @@ from settings import *
 from pytmx.util_pygame import load_pygame
 from states.title import Title
 
+# on pc: crop player sprites to make shorter - can't fit through one tile heights 
 from support import *
 
 class Game:
     def __init__(self):
         pygame.init()
-        #self.GAME_W, self.GAME_H = 800, 600
-        #self.game_canvas = pygame.Surface((self.GAME_W, self.GAME_H))
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption('Shadebreaker')
         self.clock = pygame.time.Clock()
@@ -27,9 +26,9 @@ class Game:
         self.level_frames = {
             'door': import_sub_folders('..', 'shadebreaker', 'graphics', 'level', 'door'),
             'diamond': import_folder('..', 'shadebreaker', 'graphics', 'items', 'diamond'),
-            'player': import_sub_folders('..', 'shadebreaker', 'graphics', 'player')
+            'player': import_sub_folders('..', 'shadebreaker', 'graphics', 'player'),
+            'goblin': import_folder('..', 'shadebreaker', 'graphics', 'enemies', 'goblin', 'run')
         }
-        print(self.level_frames['player'])
 
     
     def run(self):
