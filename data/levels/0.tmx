@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="60" height="20" tilewidth="64" tileheight="64" infinite="0" nextlayerid="9" nextobjectid="58">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="60" height="20" tilewidth="64" tileheight="64" infinite="0" nextlayerid="9" nextobjectid="59">
  <tileset firstgid="1" source="../tilesets/outside.tsx"/>
  <tileset firstgid="49" source="../tilesets/objects.tsx"/>
  <tileset firstgid="54" source="../tilesets/items.tsx"/>
+ <tileset firstgid="58" source="../../../Super-Pirate-World-main/data/tilesets/outside.tsx"/>
  <layer id="8" name="bg" width="60" height="20">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -35,7 +36,7 @@
 0,0,0,16,0,0,0,0,0,0,0,0,28,0,0,29,27,0,0,0,0,0,0,0,0,0,0,0,0,37,38,39,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 3,0,0,28,0,0,0,0,0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 15,0,0,0,0,0,0,0,0,0,0,0,0,0,0,28,0,0,0,0,32,2,31,39,0,0,0,0,0,0,0,0,0,0,0,32,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-17,31,0,0,0,0,0,0,0,1,2,2,3,0,0,0,0,0,0,0,25,26,27,0,0,0,0,0,0,0,0,0,0,0,37,44,27,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+17,31,0,0,0,0,61,0,0,1,2,2,3,0,0,0,0,0,0,0,25,26,27,0,0,0,0,0,0,0,0,0,0,0,37,44,27,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 14,17,2,3,0,0,1,2,2,18,14,14,15,0,0,37,38,39,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 26,26,26,27,0,0,13,14,14,14,5,26,27,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,25,26,26,26,27,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -68,7 +69,7 @@
   <object id="57" name="silver" gid="57" x="961.939" y="898.667" width="64" height="64"/>
  </objectgroup>
  <objectgroup id="5" name="enemies">
-  <object id="40" name="gunner" gid="52" x="564.97" y="389.576" width="64" height="64"/>
+  <object id="40" name="gunner" gid="52" x="571.97" y="383.576" width="64" height="64"/>
   <object id="41" name="goblin" gid="51" x="1340.73" y="319.879" width="64" height="64"/>
   <object id="42" name="goblin" gid="51" x="898.303" y="895.636" width="64" height="64"/>
   <object id="43" name="goblin" gid="51" x="1755.88" y="828.97" width="64" height="64"/>
@@ -76,6 +77,7 @@
   <object id="45" name="crate" gid="49" x="2261" y="320.939" width="78" height="54"/>
   <object id="46" name="crate" gid="49" x="2621.61" y="899.727" width="78" height="54"/>
   <object id="47" name="gunner" gid="52" x="3007.39" y="832" width="64" height="64"/>
+  <object id="58" name="gunner" gid="52" x="1344" y="640" width="64" height="64"/>
  </objectgroup>
  <objectgroup id="6" name="water">
   <object id="31" name="water" x="0" y="960" width="3840" height="320"/>

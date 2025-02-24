@@ -26,7 +26,9 @@ class Game:
             'door': import_sub_folders('..', 'shadebreaker', 'graphics', 'level', 'door'),
             'diamond': import_folder('..', 'shadebreaker', 'graphics', 'items', 'diamond'),
             'player': import_sub_folders('..', 'shadebreaker', 'graphics', 'player'),
-            'goblin': import_folder('..', 'shadebreaker', 'graphics', 'enemies', 'goblin', 'run')
+            'goblin': import_folder('..', 'shadebreaker', 'graphics', 'enemies', 'goblin', 'run'),
+            'gunner': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'gunner'),
+            'bullet': import_image('..', 'shadebreaker', 'graphics', 'enemies', 'bullets', 'bullet')
         }
 
     
