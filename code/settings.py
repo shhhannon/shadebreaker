@@ -7,5 +7,6 @@ ANIMATION_SPEED = 6
 
 # layers
 Z_LAYERS = {
-    
+    'bg tiles': 0,
+    'main': 1
 }

@@ -2,6 +2,8 @@ from settings import *
 from pytmx.util_pygame import load_pygame
 from states.title import Title
 
+from support import *
+
 class Game:
     def __init__(self):
         pygame.init()
@@ -10,6 +12,8 @@ class Game:
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption('Shadebreaker')
         self.clock = pygame.time.Clock()
+        self.import_assets()
+
         self.running, self.playing = True, False
         self.actions = {"left": False, "right": False, "up": False, "down": False, "back": False, "start": False, "pause": False}
         self.dt, self.prev_time = 0, 0 
@@ -18,6 +22,15 @@ class Game:
         self.load_states()
 
         self.tmx_maps = {0: load_pygame(os.path.join('..', 'shadebreaker', 'data', 'levels', '0.tmx'))}
+
+    def import_assets(self):
+        self.level_frames = {
+            'door': import_sub_folders('..', 'shadebreaker', 'graphics', 'level', 'door'),
+            'diamond': import_folder('..', 'shadebreaker', 'graphics', 'items', 'diamond'),
+            'player': import_sub_folders('..', 'shadebreaker', 'graphics', 'player')
+        }
+        print(self.level_frames['player'])
+
     
     def run(self):
         while self.playing:
