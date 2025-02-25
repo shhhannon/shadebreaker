@@ -2,7 +2,6 @@ from settings import *
 from pytmx.util_pygame import load_pygame
 from states.title import Title
 
-# on pc: crop player sprites to make shorter - can't fit through one tile heights 
 from support import *
 
 class Game:
@@ -17,18 +16,25 @@ class Game:
         self.actions = {"left": False, "right": False, "up": False, "down": False, "back": False, "start": False, "pause": False}
         self.dt, self.prev_time = 0, 0 
         self.state_stack = []
-        self.load_assets()
         self.load_states()
 
         self.tmx_maps = {0: load_pygame(os.path.join('..', 'shadebreaker', 'data', 'levels', '0.tmx'))}
 
     def import_assets(self):
         self.level_frames = {
+            'menu_screen': import_image('..', 'shadebreaker', 'graphics', 'level', 'bg', 'menu'),
+            'pause_screen': import_image('..', 'shadebreaker', 'graphics', 'level', 'bg', 'pause'),
+            '0_bg': import_image('..', 'shadebreaker', 'graphics', 'level', 'bg', '0'),
             'door': import_sub_folders('..', 'shadebreaker', 'graphics', 'level', 'door'),
             'diamond': import_folder('..', 'shadebreaker', 'graphics', 'items', 'diamond'),
             'player': import_sub_folders('..', 'shadebreaker', 'graphics', 'player'),
-            'goblin': import_folder('..', 'shadebreaker', 'graphics', 'enemies', 'goblin', 'run')
+            'goblin': import_folder('..', 'shadebreaker', 'graphics', 'enemies', 'goblin', 'run'),
+            'gunner': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'gunner'),
+            'bullet': import_image('..', 'shadebreaker', 'graphics', 'enemies', 'bullets', 'bullet'),
+            'crate': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'crate'),
+            'fly': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'fly'),
         }
+        self.font_dir = os.path.join("graphics", "ui", "UIfonts")
 
     
     def run(self):
@@ -70,7 +76,6 @@ class Game:
     
     def render(self):
         self.state_stack[-1].render(self.display_surface)
-        #self.screen.blit(pygame.transform.scale(self.game_canvas, (self.DISPLAY_W, self.DISPLAY_H)), (0, 0))
         pygame.display.flip()
 
     def get_dt(self):
@@ -86,12 +91,6 @@ class Game:
         text_rect.center = (x, y)
         surface.blit(text_surface, text_rect)
 
-    def load_assets(self):
-        # pointers to directories
-        self.graphics_dir = os.path.join("graphics")
-        self.bg_dir = os.path.join(self.graphics_dir, "level", "bg")
-        self.font_dir = os.path.join(self.graphics_dir, "ui", "UIfonts")
-    
     def load_states(self):
         self.title_screen = Title(self)
         self.state_stack.append(self.title_screen)

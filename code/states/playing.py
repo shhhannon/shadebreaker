@@ -6,7 +6,7 @@ from states.pause import Pause
 class Playing(State):
     def __init__(self, game):
         State.__init__(self, game)
-        self.old_bg_img = pygame.image.load(os.path.join(self.game.bg_dir, '0.png'))
+        self.old_bg_img = self.game.level_frames['0_bg']
         self.bg_img = pygame.transform.scale(self.old_bg_img, (WINDOW_WIDTH, WINDOW_HEIGHT))
         self.current_stage = Level(self.game.tmx_maps[0], self.game.level_frames, self.game)
     

@@ -4,7 +4,7 @@ from states.state import State
 class Select(State):
     def __init__(self, game):
         State.__init__(self, game)
-        self.old_image = pygame.image.load(os.path.join(self.game.bg_dir, 'pause.png'))
+        self.old_image = self.game.level_frames['pause_screen']
         self.image = pygame.transform.scale(self.old_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
         # set menu options and cursor
         self.select_options = {0: 'LEVEL 1', 1: 'LEVEL 2', 2: 'LEVEL 3'}

@@ -5,7 +5,7 @@ from states.menu import Menu
 class Title(State):
     def __init__(self, game):
         State.__init__(self, game)
-        self.old_image = pygame.image.load(os.path.join(self.game.bg_dir, 'menu.png'))
+        self.old_image = self.game.level_frames['menu_screen']
         self.image = pygame.transform.scale(self.old_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
     def update(self, delta_time, actions):
