@@ -16,7 +16,7 @@ class Player(pygame.sprite.Sprite):
 
         # rects
         self.rect = self.image.get_frect(topleft = pos)
-        self.hitbox_rect = self.rect.inflate(-32, -6)
+        self.hitbox_rect = self.rect.inflate(-40, -6)
         self.old_rect = self.hitbox_rect.copy()
 
         #movement
@@ -24,7 +24,7 @@ class Player(pygame.sprite.Sprite):
         self.speed = 200
         self.gravity = 1300
         self.jump = False
-        self.jump_height = -400
+        self.jump_height = -500
         self.attacking = False
 
         # collisions
