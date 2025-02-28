@@ -32,7 +32,7 @@ class Game:
             'gunner': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'gunner'),
             'bullet': import_image('..', 'shadebreaker', 'graphics', 'enemies', 'bullets', 'bullet'),
             'crate': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'crate'),
-            'fly': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'fly'),
+            'fly': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'fly') #check if removing the comma fixed fly animation issues 
         }
         self.font_dir = os.path.join("graphics", "ui", "UIfonts")
 
