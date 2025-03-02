@@ -135,7 +135,7 @@ class Crate(pygame.sprite.Sprite):
         self.z = Z_LAYERS['main']
         self.player = player
 
-        self.fly_timer = Timer(30000)
+        self.fly_timer = Timer(10000)
         self.create_fly = create_fly
 
         self.reversed = False
@@ -197,11 +197,13 @@ class Fly(pygame.sprite.Sprite):
         self.z = Z_LAYERS['main']
         self.player = player
         self.collision_rects = [sprite.rect for sprite in collision_sprites]
+        self.pre_attack_pos = vector(self.rect.center)
 
-        self.attack_timer = Timer(2000)
-        self.has_attacked = False
+        self.attack_timer = Timer(3000)
         self.speed = 150
         self.reversed = False
+
+        self.retreating = False
 
     def flip_frames(self, frames):
         flipped_frames = {}
@@ -209,25 +211,27 @@ class Fly(pygame.sprite.Sprite):
             flipped_frames[key] = [pygame.transform.flip(surf, True, False) for surf in surfs]
         return flipped_frames
     
-    def attack(self, dt):
-        if int(self.frame_index) == 2 and not self.has_attacked:
-            self.pre_attack_pos = vector(self.rect.center)
+    def attack(self, dt, pre_attack_pos):
+        if int(self.frame_index) == 3 :
+            self.pre_attack_pos = pre_attack_pos
             self.player_pos, self.fly_pos = vector(self.player.hitbox_rect.center), vector(self.rect.center)
             self.direction = (self.player_pos - self.fly_pos).normalize()
             self.rect.x += self.direction.x * self.speed * dt * 2
             self.rect.y += self.direction.y * self.speed * dt * 2
 
             if self.rect.colliderect(self.player.hitbox_rect):
-                return_vector = self.pre_attack_pos - self.fly_pos
-                while return_vector.length() != 0:
-                    return_vector = self.pre_attack_pos - self.fly_pos
-                    self.direction = return_vector.normalize()
-                    self.rect.x += self.direction.x * self.speed * dt
-                    self.rect.y += self.direction.y * self.speed * dt
-                    self.fly_pos = (self.rect.x, self.rect.y)
-                self.has_attacked = True
-                self.state = 'idle'
+                self.retreating = True  # Start moving back to pre-attack position
 
+        if self.retreating:
+            direction = (self.pre_attack_pos - vector(self.rect.center))
+            if direction.length() != 0:
+                t = 0.1  # Interpolation factor, adjust for smoothness
+                new_position = vector(self.rect.center) + (self.pre_attack_pos - vector(self.rect.center)) * t
+                self.rect.center = new_position
+
+            if vector(self.rect.center).distance_to(self.pre_attack_pos) < 1:
+                self.rect.center = self.pre_attack_pos  # Snap to pre-attack position
+                self.retreating = False  # Stop moving
     
     def state_management(self):
         player_pos, fly_pos = vector(self.player.hitbox_rect.center), vector(self.rect.center)
@@ -242,18 +246,22 @@ class Fly(pygame.sprite.Sprite):
             self.reversed = False
 
         if player_near and not self.attack_timer.active:
+            if self.state != 'attack':
+                self.pre_attack_pos = fly_pos
             self.state = 'attack'
             self.frame_index = 0
             self.attack_timer.activate()
         elif not player_near:
-            self.state = 'idle'
-            self.frame_index = 0
-            self.has_attacked = False
+            if self.state != 'idle':
+                self.state = 'idle'
+                self.frame_index = 0
+            self.attack_timer.deactivate()
+        
 
     def update(self, dt):
-        self.attack_timer.update
+        self.attack_timer.update()
         self.state_management()
-        print(self.state)
+        print(self.frames, self.state, self.frame_index)
 
         # animate
         self.frame_index += ANIMATION_SPEED * dt
@@ -261,7 +269,7 @@ class Fly(pygame.sprite.Sprite):
 
         # move
         if self.state == 'attack':
-            self.attack(dt)
+            self.attack(dt, self.pre_attack_pos)
         else:
             player_pos = vector(self.player.hitbox_rect.center)
             fly_pos = vector(self.rect.center)

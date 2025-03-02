@@ -83,7 +83,6 @@ class Level:
             collision_sprites = self.collision_sprites,
             player = self.player
         )
-        print('fly created')
 
     def hit_collision(self):
         for sprite in self.damage_sprites:
