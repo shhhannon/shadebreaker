@@ -1,5 +1,7 @@
 from settings import *
 from random import choice
+import math
+import random
 from game.timer import Timer
 
 class Goblin(pygame.sprite.Sprite):
@@ -14,7 +16,16 @@ class Goblin(pygame.sprite.Sprite):
         self.collision_rects = [sprite.rect for sprite in collision_sprites]
         self.speed = 150
 
+        self.hit_timer = Timer(250)
+
+    def reverse(self):
+        if not self.hit_timer.active:
+            self.direction *= -1
+            self.hit_timer.activate()
+
     def update(self, dt):
+        self.hit_timer.update()
+
         # animate
         self.frame_index += ANIMATION_SPEED * dt
         self.image = self.frames[int(self.frame_index) % len(self.frames)]
@@ -26,9 +37,11 @@ class Goblin(pygame.sprite.Sprite):
         # reverse direction
         floor_rect_right = pygame.FRect(self.rect.bottomright, (4, 4))
         floor_rect_left = pygame.FRect(self.rect.bottomleft, (4, 4))
+        wall_rect = pygame.FRect(self.rect.topleft + vector(-1,0), (self.rect.width + 2, 1))
 
         if floor_rect_right.collidelist(self.collision_rects) < 0 and self.direction > 0 or\
-            floor_rect_left.collidelist(self.collision_rects) < 0 and self.direction < 0:
+            floor_rect_left.collidelist(self.collision_rects) < 0 and self.direction < 0 or\
+            wall_rect.collidelist(self.collision_rects) != -1:
             self.direction *= -1
 
 class Gunner(pygame.sprite.Sprite):
@@ -39,12 +52,13 @@ class Gunner(pygame.sprite.Sprite):
         self.flipped_frames = self.flip_frames(frames)
         self.og_frames = self.frames
         self.state = 'idle'
+        self.prev_state = self.state
         self.image = self.frames[self.state][self.frame_index]
         self.rect = self.image.get_frect(topleft = pos)
         self.old_rect = self.rect.copy()
         self.z = Z_LAYERS['main']
         self.player = player
-        self.shoot_timer = Timer(2000)
+        self.timers = {'shoot': Timer(2000), 'hit': Timer(1000)}
         self.create_bullet = create_bullet
 
         self.reversed = False
@@ -57,7 +71,7 @@ class Gunner(pygame.sprite.Sprite):
         for key, surfs in self.frames.items():
             flipped_frames[key] = [pygame.transform.flip(surf, True, False) for surf in surfs]
         return flipped_frames
-
+    
     def state_management(self):
         player_pos, gunner_pos = vector(self.player.hitbox_rect.center), vector(self.rect.center)
         player_near = gunner_pos.distance_to(player_pos) < 640
@@ -73,13 +87,25 @@ class Gunner(pygame.sprite.Sprite):
             self.bullet_direction = 1
             self.reversed = False
 
-        if player_near and player_level and not self.shoot_timer.active:
+        if player_near and player_level and not self.timers['shoot'].active:
             self.state = 'attack'
             self.frame_index = 0
-            self.shoot_timer.activate()
+            self.timers['shoot'].activate()
+
+    def hit(self):
+        if not self.timers['hit'].active:
+            self.state = 'hit'
+            self.frame_index = 0
+            self.timers['hit'].activate()
+        if self.frame_index >= 2:
+            if self.state != 'attack':
+                self.state = 'attack'
+                self.frame_index = 0
+                self.timers['shoot'].activate()
 
     def update(self, dt):
-        self.shoot_timer.update()
+        for timer in self.timers.values():
+            timer.update()
         self.state_management()
 
         # animation / attack
@@ -110,8 +136,13 @@ class Bullet(pygame.sprite.Sprite):
         self.direction = direction
         self.speed = speed
         self.z = Z_LAYERS['main']
-        self.timers = {'lifetime': Timer(5000)}
+        self.timers = {'lifetime': Timer(5000), 'hit': Timer(250)}
         self.timers['lifetime'].activate()
+
+    def reverse(self):
+        if not self.timers['hit'].active:
+            self.direction *= -1
+            self.timers['hit'].activate()
 
     def update(self, dt):
         for timer in self.timers.values():
@@ -135,7 +166,8 @@ class Crate(pygame.sprite.Sprite):
         self.z = Z_LAYERS['main']
         self.player = player
 
-        self.fly_timer = Timer(10000)
+        self.fly_timer = Timer(120000)
+        self.timers = {'fly': Timer(7000), 'hit': Timer(1000)}
         self.create_fly = create_fly
 
         self.reversed = False
@@ -159,13 +191,24 @@ class Crate(pygame.sprite.Sprite):
             self.frames = self.og_frames
             self.reversed = False
 
-        if player_near and not self.fly_timer.active:
+        if player_near and not self.timers['fly'].active:
             self.state = 'active'
             self.frame_index = 0
-            self.fly_timer.activate()
+            self.timers['fly'].activate()
+
+    def hit(self):
+        if not self.timers['hit'].active:
+            self.state = 'hit'
+            self.frame_index = 0
+            self.timers['hit'].activate()
+        if self.frame_index >= 2:
+            if self.state != 'idle':
+                self.state = 'idle'
+                self.frame_index = 0
         
     def update(self, dt):
-        self.fly_timer.update()
+        for timer in self.timers.values():
+            timer.update()
         self.state_management()
 
         # animation / attack
@@ -191,15 +234,17 @@ class Fly(pygame.sprite.Sprite):
         self.frames, self.frame_index = frames, 0
         self.flipped_frames = self.flip_frames(frames)
         self.og_frames = self.frames
-        self.state = 'idle'
+        self.state = 'die'
         self.image = self.frames[self.state][self.frame_index]
         self.rect = self.image.get_frect(topleft = pos)
         self.z = Z_LAYERS['main']
         self.player = player
         self.collision_rects = [sprite.rect for sprite in collision_sprites]
-        self.pre_attack_pos = vector(self.rect.center)
 
-        self.attack_timer = Timer(3000)
+        self.pre_attack_pos = vector(self.rect.center)
+        self.offset = vector()
+
+        self.timers = {'attack': Timer(3000), 'hit': Timer(1000)}
         self.speed = 150
         self.reversed = False
 
@@ -211,15 +256,49 @@ class Fly(pygame.sprite.Sprite):
             flipped_frames[key] = [pygame.transform.flip(surf, True, False) for surf in surfs]
         return flipped_frames
     
+    def random_pos(self):
+        angle = random.uniform(math.pi, math.pi * 2)
+        distance = random.uniform(64, 76)
+        offset = vector(math.cos(angle) * distance, math.sin(angle) * distance)
+        return offset
+    
+    def state_management(self):
+        player_pos, fly_pos = vector(self.player.hitbox_rect.center), vector(self.rect.center)
+        player_near = fly_pos.distance_to(player_pos) <= 76
+        player_front = player_pos.x > fly_pos.x
+
+        if not player_front and not self.reversed:
+            self.frames = self.flipped_frames
+            self.reversed = True
+        elif player_front and self.reversed:
+            self.frames = self.og_frames
+            self.reversed = False
+
+        if player_near and not self.timers['attack'].active and fly_pos.distance_to(player_pos + self.offset) < 2:
+            if self.state != 'attack':
+                self.pre_attack_pos = fly_pos
+            self.state = 'attack'
+            self.frame_index = 0
+            self.timers['attack'].activate()
+        if player_near and not self.timers['attack'].active and fly_pos.distance_to(player_pos + self.offset) >= 2:
+            self.state = 'idle'
+        elif not player_near:
+            if self.state != 'idle':
+                self.offset = self.random_pos()
+                self.frame_index = 0
+            self.state = 'idle'
+            self.timers['attack'].deactivate()
+                
     def attack(self, dt, pre_attack_pos):
         if int(self.frame_index) == 3 :
-            self.pre_attack_pos = pre_attack_pos
-            self.player_pos, self.fly_pos = vector(self.player.hitbox_rect.center), vector(self.rect.center)
-            self.direction = (self.player_pos - self.fly_pos).normalize()
-            self.rect.x += self.direction.x * self.speed * dt * 2
-            self.rect.y += self.direction.y * self.speed * dt * 2
+            if not self.retreating:
+                self.pre_attack_pos = pre_attack_pos
+                self.player_pos, self.fly_pos = vector(self.player.hitbox_rect.center), vector(self.rect.center)
+                self.direction = (self.player_pos - self.fly_pos).normalize()
+                self.rect.x += self.direction.x * self.speed * dt * 2
+                self.rect.y += self.direction.y * self.speed * dt * 2
 
-            if self.rect.colliderect(self.player.hitbox_rect):
+            if self.rect.colliderect(self.player.hitbox_rect.inflate(-2, -2)):
                 self.retreating = True  # Start moving back to pre-attack position
 
         if self.retreating:
@@ -232,36 +311,31 @@ class Fly(pygame.sprite.Sprite):
             if vector(self.rect.center).distance_to(self.pre_attack_pos) < 1:
                 self.rect.center = self.pre_attack_pos  # Snap to pre-attack position
                 self.retreating = False  # Stop moving
-    
-    def state_management(self):
+
+    def idle(self, dt):
         player_pos, fly_pos = vector(self.player.hitbox_rect.center), vector(self.rect.center)
-        player_near = fly_pos.distance_to(player_pos) < 64
-        player_front = player_pos.x > fly_pos.x
-
-        if not player_front and not self.reversed:
-            self.frames = self.flipped_frames
-            self.reversed = True
-        elif player_front and self.reversed:
-            self.frames = self.og_frames
-            self.reversed = False
-
-        if player_near and not self.attack_timer.active:
-            if self.state != 'attack':
-                self.pre_attack_pos = fly_pos
-            self.state = 'attack'
-            self.frame_index = 0
-            self.attack_timer.activate()
-        elif not player_near:
-            if self.state != 'idle':
-                self.state = 'idle'
-                self.frame_index = 0
-            self.attack_timer.deactivate()
+        move_vector = (player_pos + self.offset) - fly_pos
+        if move_vector.length() != 0:
+            self.direction = move_vector.normalize()
+            self.rect.x += self.direction.x * self.speed * dt
+            self.rect.y += self.direction.y * self.speed * dt
         
+    def hit(self):
+        if not self.timers['hit'].active:
+            self.state = 'hit'
+            self.frame_index = 0
+            self.timers['hit'].activate()
+        if self.frame_index >= 2:
+            if self.state != 'attack':
+                #self.pre_attack_pos = vector(self.rect.center)
+                self.state = 'attack'
+                self.frame_index = 0
+                self.timers['attack'].activate()
 
     def update(self, dt):
-        self.attack_timer.update()
+        for timer in self.timers.values():
+            timer.update()
         self.state_management()
-        print(self.frames, self.state, self.frame_index)
 
         # animate
         self.frame_index += ANIMATION_SPEED * dt
@@ -270,11 +344,6 @@ class Fly(pygame.sprite.Sprite):
         # move
         if self.state == 'attack':
             self.attack(dt, self.pre_attack_pos)
-        else:
-            player_pos = vector(self.player.hitbox_rect.center)
-            fly_pos = vector(self.rect.center)
-            move_vector = player_pos - fly_pos
-            if move_vector.length() != 0:
-                self.direction = move_vector.normalize()
-                self.rect.x += self.direction.x * self.speed * dt
-                self.rect.y += self.direction.y * self.speed * dt
+        if self.state == 'idle':
+            self.idle(dt)
+  

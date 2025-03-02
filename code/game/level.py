@@ -1,5 +1,5 @@
 from settings import *
-from game.sprites import Sprite, AnimatedSprite
+from game.sprites import Sprite, AnimatedSprite, Item
 from game.player import Player
 from game.groups import AllSprites
 from game.enemies import Goblin, Gunner, Bullet, Crate, Fly
@@ -14,9 +14,11 @@ class Level:
         self.collision_sprites = pygame.sprite.Group()
         self.damage_sprites = pygame.sprite.Group()
         self.goblin_sprites = pygame.sprite.Group()
+        self.gunner_sprites = pygame.sprite.Group()
         self.bullet_sprites = pygame.sprite.Group()
         self.crate_sprites = pygame.sprite.Group()
         self.fly_sprites = pygame.sprite.Group()
+        self.item_sprites = pygame.sprite.Group()
 
         self.setup(tmx_map, level_frames)
 
@@ -55,7 +57,7 @@ class Level:
                 Gunner(
                     pos = (obj.x, obj.y), 
                     frames = level_frames['gunner'], 
-                    groups = (self.all_sprites, self.damage_sprites), 
+                    groups = (self.all_sprites, self.damage_sprites, self.gunner_sprites), 
                     collision_sprites = self.collision_sprites, 
                     player = self.player,
                     create_bullet = self.create_bullet)
@@ -66,6 +68,10 @@ class Level:
                     groups = (self.all_sprites, self.collision_sprites, self.crate_sprites),
                     player = self.player,
                     create_fly = self.create_fly)
+                
+        # items
+        for obj in tmx_map.get_layer_by_name('items'):
+            Item(obj.name, (obj.x + TILE_SIZE / 2, obj.y + TILE_SIZE / 2), level_frames['items'][obj.name], (self.all_sprites, self.item_sprites))
                 
     def create_bullet(self, pos, direction):
         Bullet(pos, (self.all_sprites, self.damage_sprites, self.bullet_sprites), self.bullet_surf, direction, 150)
@@ -87,13 +93,35 @@ class Level:
     def hit_collision(self):
         for sprite in self.damage_sprites:
             if sprite.rect.colliderect(self.player.hitbox_rect):
+                self.player.get_damage()
                 if hasattr(sprite, 'bullet'):
                     sprite.kill()
         
+    def item_collision(self):
+        if self.item_sprites:
+            item_sprites = pygame.sprite.spritecollide(self.player, self.item_sprites, True)
+            if item_sprites:
+                print(item_sprites[0].item_type)
+
+    def attack_collision(self):
+        for target in self.crate_sprites.sprites() + self.fly_sprites.sprites() + self.gunner_sprites.sprites():
+            facing_target = self.player.rect.centerx < target.rect.centerx and self.player.facing_right or \
+                self.player.rect.centerx > target.rect.centerx and not self.player.facing_right
+            if target.rect.colliderect(self.player.rect) and self.player.attacking and facing_target:
+                target.hit()
+
+        for target in self.goblin_sprites.sprites() + self.bullet_sprites.sprites():
+            facing_target = self.player.rect.centerx < target.rect.centerx and self.player.facing_right or \
+                self.player.rect.centerx > target.rect.centerx and not self.player.facing_right
+            if target.rect.colliderect(self.player.rect) and self.player.attacking and facing_target:
+                target.reverse()
+
     def update(self, dt):
         self.all_sprites.update(dt)
         self.bullet_collision()
         self.hit_collision()
+        self.item_collision()
+        self.attack_collision()
         self.all_sprites.draw(self.player.hitbox_rect.center)
 
     def render(self, display):
