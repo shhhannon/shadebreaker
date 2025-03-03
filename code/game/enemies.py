@@ -1,6 +1,7 @@
 from settings import *
 from random import choice
 import math
+from math import sin
 import random
 from game.timer import Timer
 
@@ -65,6 +66,7 @@ class Gunner(pygame.sprite.Sprite):
         self.has_fired = False
         self.bullet_direction = 1
         self.collision_rects = [sprite.rect for sprite in collision_sprites]
+        self.health = 3
 
     def flip_frames(self, frames):
         flipped_frames = {}
@@ -92,9 +94,13 @@ class Gunner(pygame.sprite.Sprite):
             self.frame_index = 0
             self.timers['shoot'].activate()
 
+        if self.health <= 0:
+            self.die()
+
     def hit(self):
         if not self.timers['hit'].active:
             self.state = 'hit'
+            self.health -= 1
             self.frame_index = 0
             self.timers['hit'].activate()
         if self.frame_index >= 2:
@@ -103,10 +109,18 @@ class Gunner(pygame.sprite.Sprite):
                 self.frame_index = 0
                 self.timers['shoot'].activate()
 
+    def die(self):
+        self.state = 'die'
+        if self.state != 'die':
+            self.frame_index = 0
+        if self.frame_index >= 2:
+            self.kill()
+
     def update(self, dt):
         for timer in self.timers.values():
             timer.update()
         self.state_management()
+        print(int(self.frame_index))
 
         # animation / attack
         self.frame_index += ANIMATION_SPEED * dt
@@ -115,10 +129,10 @@ class Gunner(pygame.sprite.Sprite):
 
             # attack
             if self.state == 'attack' and int(self.frame_index) == 3 and not self.has_fired and not self.reversed:
-                self.create_bullet(self.rect.center + vector(32, 20), self.bullet_direction)
+                self.create_bullet(self.rect.center + vector(26, 20), self.bullet_direction)
                 self.has_fired = True
             elif self.state == 'attack' and int(self.frame_index) == 3 and not self.has_fired and self.reversed:
-                self.create_bullet(self.rect.center + vector(-32, 20), self.bullet_direction)
+                self.create_bullet(self.rect.center + vector(-26, 20), self.bullet_direction)
                 self.has_fired = True
                 
         else:
@@ -165,6 +179,7 @@ class Crate(pygame.sprite.Sprite):
         self.old_rect = self.rect.copy()
         self.z = Z_LAYERS['main']
         self.player = player
+        self.health = 5
 
         self.fly_timer = Timer(120000)
         self.timers = {'fly': Timer(7000), 'hit': Timer(1000)}
@@ -196,16 +211,27 @@ class Crate(pygame.sprite.Sprite):
             self.frame_index = 0
             self.timers['fly'].activate()
 
+        if self.health <= 0:
+            self.die()
+
     def hit(self):
         if not self.timers['hit'].active:
             self.state = 'hit'
             self.frame_index = 0
+            self.health -= 1
             self.timers['hit'].activate()
         if self.frame_index >= 2:
             if self.state != 'idle':
                 self.state = 'idle'
                 self.frame_index = 0
-        
+
+    def die(self):
+        self.state = 'hit'
+        if self.state != 'hit':
+            self.frame_index = 0
+        if self.frame_index >= 1:
+            self.kill()
+
     def update(self, dt):
         for timer in self.timers.values():
             timer.update()
@@ -239,6 +265,7 @@ class Fly(pygame.sprite.Sprite):
         self.rect = self.image.get_frect(topleft = pos)
         self.z = Z_LAYERS['main']
         self.player = player
+        self.health = 2
         self.collision_rects = [sprite.rect for sprite in collision_sprites]
 
         self.pre_attack_pos = vector(self.rect.center)
@@ -288,6 +315,9 @@ class Fly(pygame.sprite.Sprite):
                 self.frame_index = 0
             self.state = 'idle'
             self.timers['attack'].deactivate()
+
+        if self.health <= 0:
+            self.die()
                 
     def attack(self, dt, pre_attack_pos):
         if int(self.frame_index) == 3 :
@@ -323,14 +353,21 @@ class Fly(pygame.sprite.Sprite):
     def hit(self):
         if not self.timers['hit'].active:
             self.state = 'hit'
+            self.health -= 1
             self.frame_index = 0
             self.timers['hit'].activate()
         if self.frame_index >= 2:
             if self.state != 'attack':
-                #self.pre_attack_pos = vector(self.rect.center)
                 self.state = 'attack'
                 self.frame_index = 0
                 self.timers['attack'].activate()
+
+    def die(self):
+        self.state = 'die'
+        if self.state != 'die':
+            self.frame_index = 0
+        if self.frame_index >= 2:
+            self.kill()
 
     def update(self, dt):
         for timer in self.timers.values():

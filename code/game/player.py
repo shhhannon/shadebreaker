@@ -6,10 +6,11 @@ from states.state import State
 from game.timer import Timer
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, collision_sprites, frames):
+    def __init__(self, pos, groups, collision_sprites, frames, data):
         # general setup
         super().__init__(groups)
         self.z = Z_LAYERS['main']
+        self.data = data
 
         # image
         self.frames, self.frame_index = frames, 0
@@ -18,7 +19,7 @@ class Player(pygame.sprite.Sprite):
 
         # rects
         self.rect = self.image.get_frect(topleft = pos)
-        self.hitbox_rect = self.rect.inflate(-40, 0)
+        self.hitbox_rect = self.rect.inflate(-40, -6)
         self.old_rect = self.hitbox_rect.copy()
 
         #movement
@@ -159,11 +160,11 @@ class Player(pygame.sprite.Sprite):
                     
     def get_damage(self):
         if not self.timers['hit'].active:
-            print('player was damaged')
+            self.data.health -= 1
             self.timers['hit'].activate()
 
     def flicker(self):
-        if self.timers['hit'].active and sin(pygame.time.get_ticks()) >= 0:
+        if self.timers['hit'].active and sin(pygame.time.get_ticks() * 200) >= 0:
             white_mask = pygame.mask.from_surface(self.image)
             white_surf = white_mask.to_surface()
             white_surf.set_colorkey((0,0,0))

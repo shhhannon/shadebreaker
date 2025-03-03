@@ -5,9 +5,10 @@ from game.groups import AllSprites
 from game.enemies import Goblin, Gunner, Bullet, Crate, Fly
 
 class Level:
-    def __init__(self, tmx_map, level_frames, game):
+    def __init__(self, tmx_map, level_frames, game, data):
         self.display_surface = pygame.display.get_surface()
         self.game = game
+        self.data = data
 
         # groups
         self.all_sprites = AllSprites()
@@ -45,7 +46,8 @@ class Level:
                     pos = (obj.x, obj.y),
                     groups = self.all_sprites,
                     collision_sprites = self.collision_sprites,
-                    frames = level_frames['player'])
+                    frames = level_frames['player'],
+                    data = self.data)
             else:
                 Sprite((obj.x, obj.y), obj.image, (self.all_sprites, self.collision_sprites))
         
@@ -57,7 +59,7 @@ class Level:
                 Gunner(
                     pos = (obj.x, obj.y), 
                     frames = level_frames['gunner'], 
-                    groups = (self.all_sprites, self.damage_sprites, self.gunner_sprites), 
+                    groups = (self.all_sprites, self.gunner_sprites), 
                     collision_sprites = self.collision_sprites, 
                     player = self.player,
                     create_bullet = self.create_bullet)
@@ -71,7 +73,7 @@ class Level:
                 
         # items
         for obj in tmx_map.get_layer_by_name('items'):
-            Item(obj.name, (obj.x + TILE_SIZE / 2, obj.y + TILE_SIZE / 2), level_frames['items'][obj.name], (self.all_sprites, self.item_sprites))
+            Item(obj.name, (obj.x + TILE_SIZE / 2, obj.y + TILE_SIZE / 2), level_frames['items'][obj.name], (self.all_sprites, self.item_sprites), self.data)
                 
     def create_bullet(self, pos, direction):
         Bullet(pos, (self.all_sprites, self.damage_sprites, self.bullet_sprites), self.bullet_surf, direction, 150)
@@ -101,7 +103,7 @@ class Level:
         if self.item_sprites:
             item_sprites = pygame.sprite.spritecollide(self.player, self.item_sprites, True)
             if item_sprites:
-                print(item_sprites[0].item_type)
+                item_sprites[0].activate()
 
     def attack_collision(self):
         for target in self.crate_sprites.sprites() + self.fly_sprites.sprites() + self.gunner_sprites.sprites():

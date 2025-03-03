@@ -36,7 +36,12 @@ class Game:
             'fly': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'fly'),
             'items': import_sub_folders('..', 'shadebreaker', 'graphics', 'items'),
         }
+
+        self.ui_frames = {
+            'heart': import_sub_folders('..', 'shadebreaker', 'graphics', 'ui', 'hearts'),
+        }
         self.font_dir = os.path.join("graphics", "ui", "UIfonts")
+        self.font = pygame.font.Font(os.path.join(self.font_dir, "Krungthep.ttf"), 40)
 
     
     def run(self):
