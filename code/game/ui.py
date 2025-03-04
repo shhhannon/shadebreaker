@@ -12,13 +12,18 @@ class UI:
 
         # coins
 
-    def create_hearts(self, num):
+    def create_hearts(self, max_health, health):
         for sprite in self.sprites:
             sprite.kill()
-        for heart in range(num):
-            x = 10 + heart * 40
-            y = 10
-            Heart((x,y), self.heart_frames['full'], self.sprites)
+        for heart in range(max_health):
+            if heart < health:
+                x = 10 + heart * 40
+                y = 10
+                Heart((x,y), self.heart_frames['full'], self.sprites)
+            else:
+                x = x = 10 + heart * 40
+                y = 10
+                Heart((x,y), self.heart_frames['empty'], self.sprites)
 
     def update(self, dt):
         self.sprites.update(dt)
