@@ -1,13 +1,16 @@
 from settings import *
 from os.path import join
+from math import sin
+
 from states.state import State
 from game.timer import Timer
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, collision_sprites, frames):
+    def __init__(self, pos, groups, collision_sprites, frames, data):
         # general setup
         super().__init__(groups)
         self.z = Z_LAYERS['main']
+        self.data = data
 
         # image
         self.frames, self.frame_index = frames, 0
@@ -16,7 +19,7 @@ class Player(pygame.sprite.Sprite):
 
         # rects
         self.rect = self.image.get_frect(topleft = pos)
-        self.hitbox_rect = self.rect.inflate(-32, -6)
+        self.hitbox_rect = self.rect.inflate(-40, -6)
         self.old_rect = self.hitbox_rect.copy()
 
         #movement
@@ -24,7 +27,7 @@ class Player(pygame.sprite.Sprite):
         self.speed = 200
         self.gravity = 1300
         self.jump = False
-        self.jump_height = -600
+        self.jump_height = -500
         self.attacking = False
 
         # collisions
@@ -35,7 +38,8 @@ class Player(pygame.sprite.Sprite):
         self.timers = {
             'wall jump': Timer(300),
             'pre-wall jump': Timer(250),
-            'attack block': Timer(500)
+            'attack block': Timer(500),
+            'hit': Timer(400)
         }
 
     def input(self):
@@ -153,6 +157,18 @@ class Player(pygame.sprite.Sprite):
                         self.state = 'wall'
                     else:
                         self.state = 'jump' if self.direction.y < 0 else 'fall'
+                    
+    def get_damage(self):
+        if not self.timers['hit'].active:
+            self.data.health -= 1
+            self.timers['hit'].activate()
+
+    def flicker(self):
+        if self.timers['hit'].active and sin(pygame.time.get_ticks() * 200) >= 0:
+            white_mask = pygame.mask.from_surface(self.image)
+            white_surf = white_mask.to_surface()
+            white_surf.set_colorkey((0,0,0))
+            self.image = white_surf
 
     def update(self, dt):
         self.old_rect = self.hitbox_rect.copy()
@@ -164,6 +180,4 @@ class Player(pygame.sprite.Sprite):
 
         self.get_state()
         self.animate(dt)
-
-    def render(self, display):
-        pass
+        self.flicker()

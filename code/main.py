@@ -3,6 +3,7 @@ from pytmx.util_pygame import load_pygame
 from states.title import Title
 
 from support import *
+# !!rmb to crop the player images
 
 class Game:
     def __init__(self):
@@ -33,8 +34,14 @@ class Game:
             'bullet': import_image('..', 'shadebreaker', 'graphics', 'enemies', 'bullets', 'bullet'),
             'crate': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'crate'),
             'fly': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'fly'),
+            'items': import_sub_folders('..', 'shadebreaker', 'graphics', 'items'),
+        }
+
+        self.ui_frames = {
+            'heart': import_sub_folders('..', 'shadebreaker', 'graphics', 'ui', 'hearts'),
         }
         self.font_dir = os.path.join("graphics", "ui", "UIfonts")
+        self.font = pygame.font.Font(os.path.join(self.font_dir, "Krungthep.ttf"), 40)
 
     
     def run(self):
@@ -98,6 +105,7 @@ class Game:
 
 if __name__ == "__main__": 
     game = Game()
+    
     while game.running:
         game.playing = True
         game.run()
