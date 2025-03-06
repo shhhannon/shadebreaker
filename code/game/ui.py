@@ -9,6 +9,7 @@ class UI:
 
         # hearts
         self.heart_frames = frames['heart']
+        self.diamond_frames = frames['diamond']
 
         # coins
 
@@ -25,6 +26,15 @@ class UI:
                 y = 10
                 Heart((x,y), self.heart_frames['empty'], self.sprites)
 
+    def create_diamond(self, value):
+        for sprite in self.sprites:
+            sprite.kill()
+        if value == True:
+            Diamond((1270, 10), self.diamond_frames['full'], self.sprites)
+        else:
+            Diamond((1270, 10), self.diamond_frames['empty'], self.sprites)
+              
+
     def update(self, dt):
         self.sprites.update(dt)
 
@@ -38,3 +48,9 @@ class Heart(pygame.sprite.Sprite):
         self.image = self.frames[0]  # Set the image to the first frame
         self.rect = self.image.get_rect(topleft=pos)  # Set the rect attribute
 
+class Diamond(pygame.sprite.Sprite):
+    def __init__(self, pos, frames, groups):
+        super().__init__(groups)
+        self.frames = frames
+        self.image = self.frames[0]  # Set the image to the first frame
+        self.rect = self.image.get_rect(topleft=pos)  # Set the rect attribute
