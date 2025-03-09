@@ -16,7 +16,10 @@ class Level:
 
 
         # groups
-        self.all_sprites = AllSprites()
+        self.all_sprites = AllSprites(
+            width = self.level_width,
+            height = self.level_bottom
+        )
         self.collision_sprites = pygame.sprite.Group()
         self.damage_sprites = pygame.sprite.Group()
         self.goblin_sprites = pygame.sprite.Group()

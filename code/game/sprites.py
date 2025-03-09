@@ -31,7 +31,9 @@ class Item(AnimatedSprite):
 
     def activate(self):
         if self.item_type == 'potion':
-            self.data.health += 3
+            for health in range(3):
+                if self.data.health < self.data.max_health:
+                    self.data.health += 1
         if self.item_type == 'silver':
             self.data.coins += 1
         if self.item_type == 'gold':

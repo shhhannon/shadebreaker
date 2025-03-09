@@ -171,6 +171,7 @@ class Player(pygame.sprite.Sprite):
             self.image = white_surf
 
     def update(self, dt):
+        print(self.data.health)
         self.old_rect = self.hitbox_rect.copy()
         self.update_timers()
 

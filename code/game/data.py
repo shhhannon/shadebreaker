@@ -17,6 +17,10 @@ class Data:
     def health(self, value):
         self._health = value
         self.ui.create_hearts(self._max_health, value)
+    
+    @property
+    def max_health(self):
+        return self._max_health
 
     @property
     def has_diamond(self):
