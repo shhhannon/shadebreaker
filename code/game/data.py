@@ -5,7 +5,9 @@ class Data:
         self._max_health = 5
         self._health = self._max_health
         self._has_diamond = False
+
         self.ui.create_hearts(self._max_health, self._health)
+        self.ui.create_diamond(self._has_diamond)
 
     @property
     def health(self):
@@ -22,5 +24,6 @@ class Data:
     
     @has_diamond.setter
     def has_diamond(self, value):
+        print(self._has_diamond)
         self._has_diamond = value
         self.ui.create_diamond(value)

@@ -120,7 +120,6 @@ class Gunner(pygame.sprite.Sprite):
         for timer in self.timers.values():
             timer.update()
         self.state_management()
-        print(int(self.frame_index))
 
         # animation / attack
         self.frame_index += ANIMATION_SPEED * dt

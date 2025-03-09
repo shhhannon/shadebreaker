@@ -35,6 +35,7 @@ class Game:
             'crate': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'crate'),
             'fly': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'fly'),
             'items': import_sub_folders('..', 'shadebreaker', 'graphics', 'items'),
+            'lava': import_image('..', 'shadebreaker', 'graphics', 'level', 'lava', '0'),
         }
 
         self.ui_frames = {
