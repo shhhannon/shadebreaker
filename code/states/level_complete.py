@@ -39,7 +39,7 @@ class Level_complete(State):
         if self.options[self.index] == 'NEXT LEVEL':
             pass
         elif self.options[self.index] == 'RESTART':
-            pass
+            self.game.state_stack.pop()
         elif self.options[self.index] == 'MENU':
             while len(self.game.state_stack) > 2:
                 self.game.state_stack.pop()

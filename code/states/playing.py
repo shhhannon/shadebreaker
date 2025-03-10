@@ -26,6 +26,7 @@ class Playing(State):
         if self.data.level_complete:
             new_state = Level_complete(self.game)
             new_state.enter_state()
+            self.data.level_complete = False
 
     def render(self, display):
         display.blit(self.bg_img, (0,0))
