@@ -82,7 +82,7 @@
   <object id="47" name="gunner" gid="52" x="3007.39" y="832" width="64" height="64"/>
   <object id="58" name="gunner" gid="52" x="1961" y="638.667" width="64" height="64"/>
  </objectgroup>
- <objectgroup id="6" name="water">
+ <objectgroup id="6" name="lava">
   <object id="31" name="water" x="0" y="960" width="3840" height="320"/>
  </objectgroup>
  <objectgroup id="7" name="data">

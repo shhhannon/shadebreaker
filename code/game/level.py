@@ -10,8 +10,16 @@ class Level:
         self.game = game
         self.data = data
 
+        # level data
+        self.level_width = tmx_map.width * TILE_SIZE
+        self.level_bottom = tmx_map.height * TILE_SIZE
+
+
         # groups
-        self.all_sprites = AllSprites()
+        self.all_sprites = AllSprites(
+            width = self.level_width,
+            height = self.level_bottom
+        )
         self.collision_sprites = pygame.sprite.Group()
         self.damage_sprites = pygame.sprite.Group()
         self.goblin_sprites = pygame.sprite.Group()
@@ -48,6 +56,9 @@ class Level:
                     collision_sprites = self.collision_sprites,
                     frames = level_frames['player'],
                     data = self.data)
+            elif obj.name == 'door':
+                self.door_rect = pygame.Rect((obj.x, obj.y), (obj.width, obj.height))
+                Sprite((obj.x, obj.y), obj.image, (self.all_sprites), Z_LAYERS['bg tiles'])
             else:
                 Sprite((obj.x, obj.y), obj.image, (self.all_sprites, self.collision_sprites))
         
@@ -74,7 +85,17 @@ class Level:
         # items
         for obj in tmx_map.get_layer_by_name('items'):
             Item(obj.name, (obj.x + TILE_SIZE / 2, obj.y + TILE_SIZE / 2), level_frames['items'][obj.name], (self.all_sprites, self.item_sprites), self.data)
-                
+
+        # lava
+        for obj in tmx_map.get_layer_by_name('lava'):
+            rows = int(obj.height // TILE_SIZE)
+            cols = int(obj.width // TILE_SIZE)
+            for row in range(rows):
+                for col in range(cols):
+                    x = obj.x + col * TILE_SIZE
+                    y = obj.y + row * TILE_SIZE
+                    Sprite((x, y), level_frames['lava'], self.all_sprites, Z_LAYERS['lava'])
+         
     def create_bullet(self, pos, direction):
         Bullet(pos, (self.all_sprites, self.damage_sprites, self.bullet_sprites), self.bullet_surf, direction, 150)
     
@@ -118,12 +139,28 @@ class Level:
             if target.rect.colliderect(self.player.rect) and self.player.attacking and facing_target:
                 target.reverse()
 
+    def check_constraint(self):
+        # left right
+        if self.player.hitbox_rect.left <= 0:
+            self.player.hitbox_rect.left = 0
+        if self.player.hitbox_rect.right >= self.level_width:
+            self.player.hitbox_rect.right = self.level_width
+
+        # bottom
+        if self.player.hitbox_rect.bottom >= self.level_bottom:
+            print('death')
+
+        if self.player.hitbox_rect.colliderect(self.door_rect) and self.data.has_diamond:
+            print('win')
+
     def update(self, dt):
         self.all_sprites.update(dt)
         self.bullet_collision()
         self.hit_collision()
         self.item_collision()
         self.attack_collision()
+        self.check_constraint()
+
         self.all_sprites.draw(self.player.hitbox_rect.center)
 
     def render(self, display):

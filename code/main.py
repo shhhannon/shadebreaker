@@ -35,10 +35,12 @@ class Game:
             'crate': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'crate'),
             'fly': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'fly'),
             'items': import_sub_folders('..', 'shadebreaker', 'graphics', 'items'),
+            'lava': import_image('..', 'shadebreaker', 'graphics', 'level', 'lava', '0'),
         }
 
         self.ui_frames = {
             'heart': import_sub_folders('..', 'shadebreaker', 'graphics', 'ui', 'hearts'),
+            'diamond': import_sub_folders('..', 'shadebreaker', 'graphics', 'ui', 'diamonds'),
         }
         self.font_dir = os.path.join("graphics", "ui", "UIfonts")
         self.font = pygame.font.Font(os.path.join(self.font_dir, "Krungthep.ttf"), 40)
