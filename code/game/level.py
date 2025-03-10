@@ -7,13 +7,15 @@ from game.enemies import Goblin, Gunner, Bullet, Crate, Fly
 class Level:
     def __init__(self, tmx_map, level_frames, game, data):
         self.display_surface = pygame.display.get_surface()
+        self.tmx_map = tmx_map
+        self.level_frames = level_frames
         self.game = game
         self.data = data
 
         # level data
         self.level_width = tmx_map.width * TILE_SIZE
         self.level_bottom = tmx_map.height * TILE_SIZE
-
+        self.lava_height = 0
 
         # groups
         self.all_sprites = AllSprites(
@@ -88,6 +90,7 @@ class Level:
 
         # lava
         for obj in tmx_map.get_layer_by_name('lava'):
+            self.lava_height = obj.y
             rows = int(obj.height // TILE_SIZE)
             cols = int(obj.width // TILE_SIZE)
             for row in range(rows):
@@ -147,11 +150,25 @@ class Level:
             self.player.hitbox_rect.right = self.level_width
 
         # bottom
+        if self.player.hitbox_rect.bottom >= self.lava_height:
+            for health in range(self.data.health):
+                self.player.get_damage()
         if self.player.hitbox_rect.bottom >= self.level_bottom:
-            print('death')
+            self.dead = True
 
         if self.player.hitbox_rect.colliderect(self.door_rect) and self.data.has_diamond:
             print('win')
+
+    def check_player(self):
+        if self.player.dead:
+            self.restart_level()
+
+    def restart_level(self):
+        # Reinitialize the level
+        self.data.health = self.data.max_health
+        self.data.has_diamond = False
+        self.__init__(self.tmx_map, self.level_frames, self.game, self.data)
+        self.player.dead = False
 
     def update(self, dt):
         self.all_sprites.update(dt)
@@ -160,6 +177,7 @@ class Level:
         self.item_collision()
         self.attack_collision()
         self.check_constraint()
+        self.check_player()
 
         self.all_sprites.draw(self.player.hitbox_rect.center)
 

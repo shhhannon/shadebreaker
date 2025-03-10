@@ -29,6 +29,8 @@ class Player(pygame.sprite.Sprite):
         self.jump = False
         self.jump_height = -500
         self.attacking = False
+        self.dying = False
+        self.dead = False
 
         # collisions
         self.collision_sprites = collision_sprites
@@ -140,6 +142,10 @@ class Player(pygame.sprite.Sprite):
         self.image = self.frames[self.state][int(self.frame_index) % len(self.frames[self.state])]
         self.image = self.image if self.facing_right else pygame.transform.flip(self.image, True, False)
 
+        if self.dying and self.frame_index >= len(self.frames[self.state]):
+            self.kill()
+            self.dead = True
+
         if self.attacking and self.frame_index > len(self.frames[self.state]):
             self.attacking = False
 
@@ -147,11 +153,15 @@ class Player(pygame.sprite.Sprite):
             if self.on_surface['floor']:
                 if self.attacking:
                     self.state = 'attack'
+                elif self.dying:
+                    self.state = 'die'
                 else:
                     self.state = 'idle' if self.direction.x == 0 else 'run'
             else:
                 if self.attacking:
                     self.state = 'attack'
+                elif self.dying:
+                    self.state = 'change'
                 else:
                     if any((self.on_surface['left'], self.on_surface['right'])):
                         self.state = 'wall'
@@ -161,7 +171,12 @@ class Player(pygame.sprite.Sprite):
     def get_damage(self):
         if not self.timers['hit'].active:
             self.data.health -= 1
-            self.timers['hit'].activate()
+            if self.data.health == 0:
+                self.attacking = False
+                self.frame_index = 0
+                self.dying = True
+            else:
+                self.timers['hit'].activate()
 
     def flicker(self):
         if self.timers['hit'].active and sin(pygame.time.get_ticks() * 200) >= 0:
@@ -171,7 +186,6 @@ class Player(pygame.sprite.Sprite):
             self.image = white_surf
 
     def update(self, dt):
-        print(self.data.health)
         self.old_rect = self.hitbox_rect.copy()
         self.update_timers()
 

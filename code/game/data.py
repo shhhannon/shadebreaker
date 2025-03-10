@@ -28,6 +28,5 @@ class Data:
     
     @has_diamond.setter
     def has_diamond(self, value):
-        print(self._has_diamond)
         self._has_diamond = value
         self.ui.create_diamond(value)
