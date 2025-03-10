@@ -6,6 +6,8 @@ class Data:
         self._health = self._max_health
         self._has_diamond = False
 
+        self._level_complete = False
+
         self.ui.create_hearts(self._max_health, self._health)
         self.ui.create_diamond(self._has_diamond)
 
@@ -30,3 +32,11 @@ class Data:
     def has_diamond(self, value):
         self._has_diamond = value
         self.ui.create_diamond(value)
+
+    @property
+    def level_complete(self):
+        return self._level_complete
+   
+    @level_complete.setter
+    def level_complete(self, value):
+        self._level_complete = value

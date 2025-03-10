@@ -53,7 +53,6 @@ class Gunner(pygame.sprite.Sprite):
         self.flipped_frames = self.flip_frames(frames)
         self.og_frames = self.frames
         self.state = 'idle'
-        self.prev_state = self.state
         self.image = self.frames[self.state][self.frame_index]
         self.rect = self.image.get_frect(topleft = pos)
         self.old_rect = self.rect.copy()

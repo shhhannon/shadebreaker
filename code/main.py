@@ -3,7 +3,6 @@ from pytmx.util_pygame import load_pygame
 from states.title import Title
 
 from support import *
-# !!rmb to crop the player images
 
 class Game:
     def __init__(self):

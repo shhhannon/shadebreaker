@@ -58,11 +58,11 @@ class Level:
                     collision_sprites = self.collision_sprites,
                     frames = level_frames['player'],
                     data = self.data)
-            elif obj.name == 'door':
+                
+        for obj in tmx_map.get_layer_by_name('objects'):
+            if obj.name == 'door':
                 self.door_rect = pygame.Rect((obj.x, obj.y), (obj.width, obj.height))
-                Sprite((obj.x, obj.y), obj.image, (self.all_sprites), Z_LAYERS['bg tiles'])
-            else:
-                Sprite((obj.x, obj.y), obj.image, (self.all_sprites, self.collision_sprites))
+                Door((obj.x, obj.y), level_frames['door'], self.all_sprites, self.player, self.data, Z_LAYERS['bg tiles'])
         
         # enemies
         for obj in tmx_map.get_layer_by_name('enemies'):
@@ -156,12 +156,15 @@ class Level:
         if self.player.hitbox_rect.bottom >= self.level_bottom:
             self.dead = True
 
-        if self.player.hitbox_rect.colliderect(self.door_rect) and self.data.has_diamond:
-            print('win')
-
     def check_player(self):
+        self.player_centre = self.player.hitbox_rect.center[0]
+        self.door_centre = self.door_rect.center[0]
+        self.distance = self.player_centre - self.door_centre
         if self.player.dead:
             self.restart_level()
+        if abs(self.distance) < 20 and self.data.has_diamond:
+            self.player.kill()
+            self.data.level_complete = True
 
     def restart_level(self):
         # Reinitialize the level
@@ -183,3 +186,49 @@ class Level:
 
     def render(self, display):
         self.all_sprites.draw(self.player.hitbox_rect.center)
+
+class Door(pygame.sprite.Sprite):
+    def __init__(self, pos, frames, groups, player, data, z):
+        super().__init__(groups)
+        self.frames, self.frame_index = frames, 0
+        self.state = 'idle'
+        self.image = self.frames[self.state][self.frame_index]
+        self.rect = self.image.get_frect(topleft = pos)
+        self.player = player
+        self.data = data
+        self.z = z
+
+        self.opened = False
+        self.was_near = False
+
+    def state_management(self):
+        player_pos, door_pos = vector(self.player.hitbox_rect.center), vector(self.rect.center)
+        player_near = door_pos.distance_to(player_pos) < 320
+
+        if player_near and self.data.has_diamond:
+            self.state = 'opening'
+            self.opened = True
+            self.was_near = True
+            if self.state != 'opening':
+                self.frame_index = 0
+        if self.was_near and not player_near:
+            self.state = 'closing'
+            self.opened = False
+            if self.state != 'closing':
+                self.frame_index = 0
+
+        self.was_near = player_near
+        
+        if self.state == 'closing' and self.frame_index >= len(self.frames[self.state]):
+            self.state = 'idle'
+            self.frame_index = 0
+
+    def update(self, dt):
+        self.state_management()
+
+        if self.opened and self.frame_index >= 4:
+            self.frame_index = 4
+
+        # animation
+        self.frame_index += ANIMATION_SPEED * dt
+        self.image = self.frames[self.state][int(self.frame_index) % len(self.frames[self.state])]
