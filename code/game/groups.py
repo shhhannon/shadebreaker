@@ -16,7 +16,6 @@ class AllSprites(pygame.sprite.Group):
     def camera_constraint(self):
         self.offset.x = min(self.offset.x, self.borders['left'])
         self.offset.x = max(self.offset.x, self.borders['right'])
-        self.offset.y = min(self.offset.y, self.borders['top'])
         self.offset.y = max(self.offset.y, self.borders['bottom'])
 
     def draw(self, target_pos):

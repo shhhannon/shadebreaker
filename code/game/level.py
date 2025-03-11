@@ -7,13 +7,15 @@ from game.enemies import Goblin, Gunner, Bullet, Crate, Fly
 class Level:
     def __init__(self, tmx_map, level_frames, game, data):
         self.display_surface = pygame.display.get_surface()
+        self.tmx_map = tmx_map
+        self.level_frames = level_frames
         self.game = game
         self.data = data
 
         # level data
         self.level_width = tmx_map.width * TILE_SIZE
         self.level_bottom = tmx_map.height * TILE_SIZE
-
+        self.lava_height = 0
 
         # groups
         self.all_sprites = AllSprites(
@@ -56,11 +58,11 @@ class Level:
                     collision_sprites = self.collision_sprites,
                     frames = level_frames['player'],
                     data = self.data)
-            elif obj.name == 'door':
+                
+        for obj in tmx_map.get_layer_by_name('objects'):
+            if obj.name == 'door':
                 self.door_rect = pygame.Rect((obj.x, obj.y), (obj.width, obj.height))
-                Sprite((obj.x, obj.y), obj.image, (self.all_sprites), Z_LAYERS['bg tiles'])
-            else:
-                Sprite((obj.x, obj.y), obj.image, (self.all_sprites, self.collision_sprites))
+                Door((obj.x, obj.y), level_frames['door'], self.all_sprites, self.player, self.data, Z_LAYERS['bg tiles'])
         
         # enemies
         for obj in tmx_map.get_layer_by_name('enemies'):
@@ -88,6 +90,7 @@ class Level:
 
         # lava
         for obj in tmx_map.get_layer_by_name('lava'):
+            self.lava_height = obj.y
             rows = int(obj.height // TILE_SIZE)
             cols = int(obj.width // TILE_SIZE)
             for row in range(rows):
@@ -147,11 +150,28 @@ class Level:
             self.player.hitbox_rect.right = self.level_width
 
         # bottom
+        if self.player.hitbox_rect.bottom >= self.lava_height:
+            for health in range(self.data.health):
+                self.player.get_damage()
         if self.player.hitbox_rect.bottom >= self.level_bottom:
-            print('death')
+            self.dead = True
 
-        if self.player.hitbox_rect.colliderect(self.door_rect) and self.data.has_diamond:
-            print('win')
+    def check_player(self):
+        self.player_centre = self.player.hitbox_rect.center[0]
+        self.door_centre = self.door_rect.center[0]
+        self.distance = self.player_centre - self.door_centre
+        if self.player.dead:
+            self.restart_level()
+        if abs(self.distance) < 20 and self.data.has_diamond:
+            self.player.kill()
+            self.data.level_complete = True
+
+    def restart_level(self):
+        # Reinitialize the level
+        self.data.health = self.data.max_health
+        self.data.has_diamond = False
+        self.__init__(self.tmx_map, self.level_frames, self.game, self.data)
+        self.player.dead = False
 
     def update(self, dt):
         self.all_sprites.update(dt)
@@ -160,8 +180,55 @@ class Level:
         self.item_collision()
         self.attack_collision()
         self.check_constraint()
+        self.check_player()
 
         self.all_sprites.draw(self.player.hitbox_rect.center)
 
     def render(self, display):
         self.all_sprites.draw(self.player.hitbox_rect.center)
+
+class Door(pygame.sprite.Sprite):
+    def __init__(self, pos, frames, groups, player, data, z):
+        super().__init__(groups)
+        self.frames, self.frame_index = frames, 0
+        self.state = 'idle'
+        self.image = self.frames[self.state][self.frame_index]
+        self.rect = self.image.get_frect(topleft = pos)
+        self.player = player
+        self.data = data
+        self.z = z
+
+        self.opened = False
+        self.was_near = False
+
+    def state_management(self):
+        player_pos, door_pos = vector(self.player.hitbox_rect.center), vector(self.rect.center)
+        player_near = door_pos.distance_to(player_pos) < 320
+
+        if player_near and self.data.has_diamond:
+            self.state = 'opening'
+            self.opened = True
+            self.was_near = True
+            if self.state != 'opening':
+                self.frame_index = 0
+        if self.was_near and not player_near:
+            self.state = 'closing'
+            self.opened = False
+            if self.state != 'closing':
+                self.frame_index = 0
+
+        self.was_near = player_near
+        
+        if self.state == 'closing' and self.frame_index >= len(self.frames[self.state]):
+            self.state = 'idle'
+            self.frame_index = 0
+
+    def update(self, dt):
+        self.state_management()
+
+        if self.opened and self.frame_index >= 4:
+            self.frame_index = 4
+
+        # animation
+        self.frame_index += ANIMATION_SPEED * dt
+        self.image = self.frames[self.state][int(self.frame_index) % len(self.frames[self.state])]
