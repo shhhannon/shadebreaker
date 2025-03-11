@@ -11,6 +11,7 @@ class Level:
         self.level_frames = level_frames
         self.game = game
         self.data = data
+        self.test = 0
 
         # level data
         self.level_width = tmx_map.width * TILE_SIZE
@@ -66,8 +67,11 @@ class Level:
         
         # enemies
         for obj in tmx_map.get_layer_by_name('enemies'):
+            self.data.enemy_count += 1 # enemy count is not accurate
+            self.test += 1 
+            print(self.test)
             if obj.name == 'goblin':
-                Goblin((obj.x, obj.y), level_frames['goblin'], (self.all_sprites, self.damage_sprites, self.goblin_sprites), self.collision_sprites)
+                Goblin((obj.x, obj.y), level_frames['goblin'], (self.all_sprites, self.damage_sprites, self.goblin_sprites), self.collision_sprites, self.data)
             if obj.name == 'gunner':
                 Gunner(
                     pos = (obj.x, obj.y), 
@@ -75,18 +79,22 @@ class Level:
                     groups = (self.all_sprites, self.gunner_sprites), 
                     collision_sprites = self.collision_sprites, 
                     player = self.player,
-                    create_bullet = self.create_bullet)
+                    create_bullet = self.create_bullet,
+                    data = self.data)
             if obj.name == 'crate':
                 Crate(
                     pos = (obj.x, obj.y),
                     frames = level_frames['crate'],
                     groups = (self.all_sprites, self.collision_sprites, self.crate_sprites),
                     player = self.player,
-                    create_fly = self.create_fly)
+                    create_fly = self.create_fly, 
+                    data = self.data)
                 
         # items
         for obj in tmx_map.get_layer_by_name('items'):
             Item(obj.name, (obj.x + TILE_SIZE / 2, obj.y + TILE_SIZE / 2), level_frames['items'][obj.name], (self.all_sprites, self.item_sprites), self.data)
+            if obj.name == 'silver' or obj.name == 'gold':
+                self.data.coin_count += 1
 
         # lava
         for obj in tmx_map.get_layer_by_name('lava'):

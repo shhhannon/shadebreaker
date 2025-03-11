@@ -17,6 +17,12 @@ class Playing(State):
         self.data = Data(self.ui)
         self.current_stage = Level(self.game.tmx_maps[0], self.game.level_frames, self.game, self.data)
     
+    def enter_level(self):
+        self.data.health = self.data.max_health
+        self.data.has_diamond = False
+        self.__init__(self.game, self.data)
+        self.player.dead = False
+
     def update(self, dt, actions):
         if actions['pause']:
             new_state = Pause(self.game)
@@ -25,7 +31,6 @@ class Playing(State):
         self.ui.update(dt)
 
         if self.data.level_complete:
-            print(self.data.level_complete)
             self.data.level_complete = False
             new_state = Level_complete(self.game)
             new_state.enter_state()

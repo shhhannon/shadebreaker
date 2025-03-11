@@ -1,7 +1,10 @@
 from settings import *
 from states.state import State
 
+# issue is that when we go back to the playing state, the level
+# is in the same state as when the player reached the door
 # need to reinitialise the playing class to get level to restart
+# need to make score algorithm
 
 class Level_complete(State):
     def __init__(self, game):
@@ -41,6 +44,7 @@ class Level_complete(State):
         if self.options[self.index] == 'NEXT LEVEL':
             pass
         elif self.options[self.index] == 'RESTART':
+            # add code to reinitialise the playing class
             self.game.state_stack.pop()
         elif self.options[self.index] == 'MENU':
             while len(self.game.state_stack) > 2:
