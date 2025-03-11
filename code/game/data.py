@@ -6,11 +6,16 @@ class Data:
         self._health = self._max_health
         self._has_diamond = False
 
+        self._enemy_count = 0
+        self._kills = 0
+        self._coin_count = 0
+
         self._level_complete = False
 
         self.ui.create_hearts(self._max_health, self._health)
         self.ui.create_diamond(self._has_diamond)
 
+    # ui
     @property
     def health(self):
         return self._health
@@ -33,6 +38,34 @@ class Data:
         self._has_diamond = value
         self.ui.create_diamond(value)
 
+    
+    # score
+    @property
+    def enemy_count(self):
+        return self._enemy_count
+   
+    @enemy_count.setter
+    def enemy_count(self, value):
+        self._enemy_count = value
+
+    @property
+    def kills(self):
+        return self._kills
+   
+    @kills.setter
+    def kills(self, value):
+        self._kills = value
+
+    @property
+    def coin_count(self):
+        return self._coin_count
+   
+    @coin_count.setter
+    def coin_count(self, value):
+        self._coin_count = value
+  
+    
+    # level properties
     @property
     def level_complete(self):
         return self._level_complete

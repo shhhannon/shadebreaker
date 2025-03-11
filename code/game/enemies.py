@@ -5,13 +5,16 @@ from math import sin
 import random
 from game.timer import Timer
 
+# code the goblin health
+
 class Goblin(pygame.sprite.Sprite):
-    def __init__(self, pos, frames, groups, collision_sprites):
+    def __init__(self, pos, frames, groups, collision_sprites, data):
         super().__init__(groups)
         self.frames, self.frame_index = frames, 0
         self.image = self.frames[self.frame_index]
         self.rect = self.image.get_frect(topleft = pos)
         self.z = Z_LAYERS['main']
+        self.data = data
 
         self.direction = choice((-1, 1))
         self.collision_rects = [sprite.rect for sprite in collision_sprites]
@@ -46,7 +49,7 @@ class Goblin(pygame.sprite.Sprite):
             self.direction *= -1
 
 class Gunner(pygame.sprite.Sprite):
-    def __init__(self, pos, frames, groups, collision_sprites, player, create_bullet):
+    def __init__(self, pos, frames, groups, collision_sprites, player, create_bullet, data):
         super().__init__(groups)
 
         self.frames, self.frame_index = frames, 0
@@ -60,6 +63,7 @@ class Gunner(pygame.sprite.Sprite):
         self.player = player
         self.timers = {'shoot': Timer(2000), 'hit': Timer(1000)}
         self.create_bullet = create_bullet
+        self.data = data
 
         self.reversed = False
         self.has_fired = False
@@ -109,6 +113,7 @@ class Gunner(pygame.sprite.Sprite):
                 self.timers['shoot'].activate()
 
     def die(self):
+        self.data.kills += 1
         self.state = 'die'
         if self.state != 'die':
             self.frame_index = 0
@@ -165,7 +170,7 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
 
 class Crate(pygame.sprite.Sprite):
-    def __init__(self, pos, frames, groups, player, create_fly):
+    def __init__(self, pos, frames, groups, player, create_fly, data):
         super().__init__(groups)
         
         self.frames, self.frame_index = frames, 0
@@ -178,6 +183,7 @@ class Crate(pygame.sprite.Sprite):
         self.z = Z_LAYERS['main']
         self.player = player
         self.health = 5
+        self.data = data
 
         self.fly_timer = Timer(120000)
         self.timers = {'fly': Timer(7000), 'hit': Timer(1000)}
@@ -224,6 +230,7 @@ class Crate(pygame.sprite.Sprite):
                 self.frame_index = 0
 
     def die(self):
+        self.data.kills += 1
         self.state = 'hit'
         if self.state != 'hit':
             self.frame_index = 0

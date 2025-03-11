@@ -47,8 +47,11 @@ class Level:
                     case 'bg': z = Z_LAYERS['bg tiles']
                     case 'terrain': z = Z_LAYERS['main']
                 Sprite((x * TILE_SIZE,y * TILE_SIZE), surf, groups, z)
-            # sprite is in both all_sprites and collision_sprites
         
+        # objects
+        self.load_objects(tmx_map, level_frames)
+        
+    def load_objects(self, tmx_map, level_frames):
         # objects
         for obj in tmx_map.get_layer_by_name('objects'):
             if obj.name == 'player':
@@ -66,8 +69,9 @@ class Level:
         
         # enemies
         for obj in tmx_map.get_layer_by_name('enemies'):
+            self.data.enemy_count += 1
             if obj.name == 'goblin':
-                Goblin((obj.x, obj.y), level_frames['goblin'], (self.all_sprites, self.damage_sprites, self.goblin_sprites), self.collision_sprites)
+                Goblin((obj.x, obj.y), level_frames['goblin'], (self.all_sprites, self.damage_sprites, self.goblin_sprites), self.collision_sprites, self.data)
             if obj.name == 'gunner':
                 Gunner(
                     pos = (obj.x, obj.y), 
@@ -75,18 +79,22 @@ class Level:
                     groups = (self.all_sprites, self.gunner_sprites), 
                     collision_sprites = self.collision_sprites, 
                     player = self.player,
-                    create_bullet = self.create_bullet)
+                    create_bullet = self.create_bullet,
+                    data = self.data)
             if obj.name == 'crate':
                 Crate(
                     pos = (obj.x, obj.y),
                     frames = level_frames['crate'],
                     groups = (self.all_sprites, self.collision_sprites, self.crate_sprites),
                     player = self.player,
-                    create_fly = self.create_fly)
+                    create_fly = self.create_fly,
+                    data = self.data)
                 
         # items
         for obj in tmx_map.get_layer_by_name('items'):
             Item(obj.name, (obj.x + TILE_SIZE / 2, obj.y + TILE_SIZE / 2), level_frames['items'][obj.name], (self.all_sprites, self.item_sprites), self.data)
+            if obj.name == 'silver' or obj.name == 'gold':
+                self.data.coin_count += 1
 
         # lava
         for obj in tmx_map.get_layer_by_name('lava'):
@@ -167,13 +175,32 @@ class Level:
             self.data.level_complete = True
 
     def restart_level(self):
-        # Reinitialize the level
+        # clear all sprites
+        self.all_sprites.empty()
+        self.collision_sprites.empty()
+        self.damage_sprites.empty()
+        self.goblin_sprites.empty()
+        self.gunner_sprites.empty()
+        self.bullet_sprites.empty()
+        self.crate_sprites.empty()
+        self.fly_sprites.empty()
+        self.item_sprites.empty()
+
+        # reinitialize the level
+        self.player = None
+        self.door = None
         self.data.health = self.data.max_health
         self.data.has_diamond = False
-        self.__init__(self.tmx_map, self.level_frames, self.game, self.data)
+        self.data.kills = 0
+        self.data.coins = 0
+        self.data.enemy_count = 0
+        self.data.coin_count = 0
+        
+        self.setup(self.tmx_map, self.level_frames)
         self.player.dead = False
 
     def update(self, dt):
+        print(self.data.enemy_count, self.data.kills, self.data.coin_count)
         self.all_sprites.update(dt)
         self.bullet_collision()
         self.hit_collision()
