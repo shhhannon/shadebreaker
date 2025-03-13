@@ -22,6 +22,7 @@ class Level:
             width = self.level_width,
             height = self.level_bottom
         )
+        self.change_sprites = pygame.sprite.Group()
         self.collision_sprites = pygame.sprite.Group()
         self.damage_sprites = pygame.sprite.Group()
         self.goblin_sprites = pygame.sprite.Group()
@@ -50,6 +51,21 @@ class Level:
         
         # objects
         self.load_objects(tmx_map, level_frames)
+
+    def check_world(self):
+        for sprite in self.change_sprites:
+            self.all_sprites.remove(sprite)
+            self.collision_sprites.remove(sprite)
+        self.change_sprites.empty()
+
+        if not self.data.light_world:
+            for x, y, surf in self.tmx_map.get_layer_by_name('dark').tiles():
+                groups = [self.all_sprites, self.collision_sprites, self.change_sprites]
+                Sprite((x * TILE_SIZE, y * TILE_SIZE), surf, groups, Z_LAYERS['main'])
+        else:
+            for x, y, surf in self.tmx_map.get_layer_by_name('light').tiles():
+                groups = [self.all_sprites, self.collision_sprites, self.change_sprites]
+                Sprite((x * TILE_SIZE, y * TILE_SIZE), surf, groups, Z_LAYERS['main'])
         
     def load_objects(self, tmx_map, level_frames):
         # objects
@@ -93,7 +109,7 @@ class Level:
         # items
         for obj in tmx_map.get_layer_by_name('items'):
             Item(obj.name, (obj.x + TILE_SIZE / 2, obj.y + TILE_SIZE / 2), level_frames['items'][obj.name], (self.all_sprites, self.item_sprites), self.data)
-            if obj.name == 'silver' or obj.name == 'gold':
+            if obj.name == 'silver':
                 self.data.coin_count += 1
 
         # lava
@@ -127,7 +143,7 @@ class Level:
     def hit_collision(self):
         for sprite in self.damage_sprites:
             if sprite.rect.colliderect(self.player.hitbox_rect):
-                self.player.get_damage()
+                #self.player.get_damage()
                 if hasattr(sprite, 'bullet'):
                     sprite.kill()
         
@@ -200,7 +216,6 @@ class Level:
         self.player.dead = False
 
     def update(self, dt):
-        print(self.data.enemy_count, self.data.kills, self.data.coin_count)
         self.all_sprites.update(dt)
         self.bullet_collision()
         self.hit_collision()
@@ -208,6 +223,7 @@ class Level:
         self.attack_collision()
         self.check_constraint()
         self.check_player()
+        self.check_world()
 
         self.all_sprites.draw(self.player.hitbox_rect.center)
 

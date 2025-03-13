@@ -9,8 +9,10 @@ class Data:
         self._enemy_count = 0
         self._kills = 0
         self._coin_count = 0
+        self.score = 0
 
         self._level_complete = False
+        self._light_world = False
 
         self.ui.create_hearts(self._max_health, self._health)
         self.ui.create_diamond(self._has_diamond)
@@ -63,6 +65,12 @@ class Data:
     @coin_count.setter
     def coin_count(self, value):
         self._coin_count = value
+
+    def calculate_score(self):
+        self.score = int((self._kills/self._enemy_count + self.coins/self._coin_count) * 100)
+        if self.score == 0:
+            self.score = 0
+        return self.score
   
     
     # level properties
@@ -73,3 +81,11 @@ class Data:
     @level_complete.setter
     def level_complete(self, value):
         self._level_complete = value
+
+    @property
+    def light_world(self):
+        return self._light_world
+   
+    @light_world.setter
+    def light_world(self, value):
+        self._light_world = value

@@ -15,6 +15,7 @@ class Goblin(pygame.sprite.Sprite):
         self.rect = self.image.get_frect(topleft = pos)
         self.z = Z_LAYERS['main']
         self.data = data
+        self.health = 3
 
         self.direction = choice((-1, 1))
         self.collision_rects = [sprite.rect for sprite in collision_sprites]
@@ -113,12 +114,12 @@ class Gunner(pygame.sprite.Sprite):
                 self.timers['shoot'].activate()
 
     def die(self):
-        self.data.kills += 1
         self.state = 'die'
         if self.state != 'die':
             self.frame_index = 0
         if self.frame_index >= 2:
             self.kill()
+            self.data.kills += 1
 
     def update(self, dt):
         for timer in self.timers.values():
@@ -230,12 +231,12 @@ class Crate(pygame.sprite.Sprite):
                 self.frame_index = 0
 
     def die(self):
-        self.data.kills += 1
         self.state = 'hit'
         if self.state != 'hit':
             self.frame_index = 0
         if self.frame_index >= 1:
             self.kill()
+            self.data.kills += 1
 
     def update(self, dt):
         for timer in self.timers.values():

@@ -4,7 +4,7 @@ import importlib
 
 
 class Level_complete(State):
-    def __init__(self, game):
+    def __init__(self, game, data):
         State.__init__(self, game)
         self.old_image = self.game.level_frames['pause_screen']
         self.image = pygame.transform.scale(self.old_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -14,7 +14,8 @@ class Level_complete(State):
         self.cursor_pos_y = WINDOW_HEIGHT/2 + 100
         self.cursor_rect.x, self.cursor_rect.y = WINDOW_WIDTH/2 - 140, self.cursor_pos_y + 4
 
-        self.score = 0
+        self.data = data
+        self.score = self.data.calculate_score()
 
     def update(self, delta_time, actions):
         self.update_cursor(actions)
