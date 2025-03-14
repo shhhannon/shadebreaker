@@ -1,13 +1,10 @@
 from settings import *
 from states.state import State
+import importlib
 
-# issue is that when we go back to the playing state, the level
-# is in the same state as when the player reached the door
-# need to reinitialise the playing class to get level to restart
-# need to make score algorithm
 
 class Level_complete(State):
-    def __init__(self, game):
+    def __init__(self, game, data):
         State.__init__(self, game)
         self.old_image = self.game.level_frames['pause_screen']
         self.image = pygame.transform.scale(self.old_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -17,7 +14,8 @@ class Level_complete(State):
         self.cursor_pos_y = WINDOW_HEIGHT/2 + 100
         self.cursor_rect.x, self.cursor_rect.y = WINDOW_WIDTH/2 - 140, self.cursor_pos_y + 4
 
-        self.score = 0
+        self.data = data
+        self.score = self.data.calculate_score()
 
     def update(self, delta_time, actions):
         self.update_cursor(actions)
@@ -44,8 +42,12 @@ class Level_complete(State):
         if self.options[self.index] == 'NEXT LEVEL':
             pass
         elif self.options[self.index] == 'RESTART':
-            # add code to reinitialise the playing class
-            self.game.state_stack.pop()
+            for states in range(2):
+                self.game.state_stack.pop()
+            playing_module = importlib.import_module('states.playing')
+            Playing = getattr(playing_module, 'Playing')
+            new_state = Playing(self.game)
+            new_state.enter_state()
         elif self.options[self.index] == 'MENU':
             while len(self.game.state_stack) > 2:
                 self.game.state_stack.pop()

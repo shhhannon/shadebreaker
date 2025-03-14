@@ -5,7 +5,7 @@ from math import sin
 import random
 from game.timer import Timer
 
-# need to code health for goblin
+# code the goblin health
 
 class Goblin(pygame.sprite.Sprite):
     def __init__(self, pos, frames, groups, collision_sprites, data):
@@ -15,6 +15,7 @@ class Goblin(pygame.sprite.Sprite):
         self.rect = self.image.get_frect(topleft = pos)
         self.z = Z_LAYERS['main']
         self.data = data
+        self.health = 3
 
         self.direction = choice((-1, 1))
         self.collision_rects = [sprite.rect for sprite in collision_sprites]
@@ -114,11 +115,11 @@ class Gunner(pygame.sprite.Sprite):
 
     def die(self):
         self.state = 'die'
-        self.data.enemies_killed += 1
         if self.state != 'die':
             self.frame_index = 0
         if self.frame_index >= 2:
             self.kill()
+            self.data.kills += 1
 
     def update(self, dt):
         for timer in self.timers.values():
@@ -182,8 +183,8 @@ class Crate(pygame.sprite.Sprite):
         self.old_rect = self.rect.copy()
         self.z = Z_LAYERS['main']
         self.player = player
-        self.data = data
         self.health = 5
+        self.data = data
 
         self.fly_timer = Timer(120000)
         self.timers = {'fly': Timer(7000), 'hit': Timer(1000)}
@@ -231,11 +232,11 @@ class Crate(pygame.sprite.Sprite):
 
     def die(self):
         self.state = 'hit'
-        self.data.enemies_killed += 1
         if self.state != 'hit':
             self.frame_index = 0
         if self.frame_index >= 1:
             self.kill()
+            self.data.kills += 1
 
     def update(self, dt):
         for timer in self.timers.values():

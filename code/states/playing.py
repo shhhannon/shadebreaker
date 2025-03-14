@@ -10,32 +10,31 @@ from game.ui import UI
 class Playing(State):
     def __init__(self, game):
         State.__init__(self, game)
-        self.old_bg_img = self.game.level_frames['0_bg']
-        self.bg_img = pygame.transform.scale(self.old_bg_img, (WINDOW_WIDTH, WINDOW_HEIGHT))
+        """
+        if not self.data.light_world:
+            self.old_bg_img = self.game.level_frames['0_bg'][0]
+        else:
+            self.old_bg_img = self.game.level_frames['0_bg'][1]
+        self.bg_img = pygame.transform.scale(self.old_bg_img, (WINDOW_WIDTH, WINDOW_HEIGHT))"
+        """
 
         self.ui = UI(self.game.font, self.game.ui_frames)
         self.data = Data(self.ui)
+            
         self.current_stage = Level(self.game.tmx_maps[0], self.game.level_frames, self.game, self.data)
     
-    def enter_level(self):
-        self.data.health = self.data.max_health
-        self.data.has_diamond = False
-        self.__init__(self.game, self.data)
-        self.player.dead = False
-
     def update(self, dt, actions):
         if actions['pause']:
             new_state = Pause(self.game)
             new_state.enter_state()
         self.current_stage.update(dt)
         self.ui.update(dt)
-
         if self.data.level_complete:
-            self.data.level_complete = False
-            new_state = Level_complete(self.game)
+            new_state = Level_complete(self.game, self.data)
             new_state.enter_state()
+            self.data.level_complete = False
 
     def render(self, display):
-        display.blit(self.bg_img, (0,0))
+        #display.blit(self.bg_img, (0,0))
         self.current_stage.render(display)
         self.ui.render()

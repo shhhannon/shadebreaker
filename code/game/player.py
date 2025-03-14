@@ -29,6 +29,7 @@ class Player(pygame.sprite.Sprite):
         self.jump = False
         self.jump_height = -500
         self.attacking = False
+        self.changing = False
         self.dying = False
         self.dead = False
 
@@ -41,7 +42,8 @@ class Player(pygame.sprite.Sprite):
             'wall jump': Timer(300),
             'pre-wall jump': Timer(250),
             'attack block': Timer(500),
-            'hit': Timer(400)
+            'hit': Timer(400),
+            'change': Timer(20000)
         }
 
     def input(self):
@@ -63,11 +65,20 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_UP] or keys[pygame.K_w]:
             self.jump = True
 
+        if keys[pygame.K_c]:
+            self.change()
+
     def attack(self):
         if not self.timers['attack block'].active:
             self.attacking = True
             self.frame_index = 0
             self.timers['attack block'].activate()
+
+    def change(self):
+        if not self.timers['change'].active:
+            self.changing = True
+            self.frame_index = 0
+            self.timers['change'].activate()
 
     def move(self, dt):
         # horizontal
@@ -148,25 +159,32 @@ class Player(pygame.sprite.Sprite):
 
         if self.attacking and self.frame_index > len(self.frames[self.state]):
             self.attacking = False
+        
+        if self.changing and self.frame_index > len(self.frames[self.state]):
+            self.changing = False
+            self.data.light_world = not self.data.light_world
 
     def get_state(self):
-            if self.on_surface['floor']:
-                if self.attacking:
-                    self.state = 'attack'
-                elif self.dying:
-                    self.state = 'die'
-                else:
-                    self.state = 'idle' if self.direction.x == 0 else 'run'
+        if self.on_surface['floor']:
+            if self.attacking:
+                self.state = 'attack'
+            elif self.dying:
+                self.state = 'die'
             else:
-                if self.attacking:
-                    self.state = 'attack'
-                elif self.dying:
-                    self.state = 'change'
+                self.state = 'idle' if self.direction.x == 0 else 'run'
+        else:
+            if self.attacking:
+                self.state = 'attack'
+            elif self.dying:
+                self.state = 'change'
+            else:
+                if any((self.on_surface['left'], self.on_surface['right'])):
+                    self.state = 'wall'
                 else:
-                    if any((self.on_surface['left'], self.on_surface['right'])):
-                        self.state = 'wall'
-                    else:
-                        self.state = 'jump' if self.direction.y < 0 else 'fall'
+                    self.state = 'jump' if self.direction.y < 0 else 'fall'
+
+        if self.changing:
+            self.state = 'change'
                     
     def get_damage(self):
         if not self.timers['hit'].active:

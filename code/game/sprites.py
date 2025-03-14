@@ -36,7 +36,5 @@ class Item(AnimatedSprite):
                     self.data.health += 1
         if self.item_type == 'silver':
             self.data.coins += 1
-        if self.item_type == 'gold':
-            self.data.coins += 5
         if self.item_type == 'diamond':
             self.data.has_diamond = True

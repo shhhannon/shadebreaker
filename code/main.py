@@ -24,7 +24,7 @@ class Game:
         self.level_frames = {
             'menu_screen': import_image('..', 'shadebreaker', 'graphics', 'level', 'bg', 'menu'),
             'pause_screen': import_image('..', 'shadebreaker', 'graphics', 'level', 'bg', 'pause'),
-            '0_bg': import_image('..', 'shadebreaker', 'graphics', 'level', 'bg', '0'),
+            '0': import_folder('..', 'shadebreaker', 'graphics', 'level', 'bg', '0'),
             'door': import_sub_folders('..', 'shadebreaker', 'graphics', 'level', 'door'),
             'diamond': import_folder('..', 'shadebreaker', 'graphics', 'items', 'diamond'),
             'player': import_sub_folders('..', 'shadebreaker', 'graphics', 'player'),

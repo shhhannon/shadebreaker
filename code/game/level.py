@@ -11,18 +11,21 @@ class Level:
         self.level_frames = level_frames
         self.game = game
         self.data = data
-        self.test = 0
 
         # level data
         self.level_width = tmx_map.width * TILE_SIZE
         self.level_bottom = tmx_map.height * TILE_SIZE
         self.lava_height = 0
 
+        self.old_bg_img = self.game.level_frames[str(self.data.level)][0]
+        self.bg_img = pygame.transform.scale(self.old_bg_img, (WINDOW_WIDTH, WINDOW_HEIGHT))
+
         # groups
         self.all_sprites = AllSprites(
             width = self.level_width,
             height = self.level_bottom
         )
+        self.change_sprites = pygame.sprite.Group()
         self.collision_sprites = pygame.sprite.Group()
         self.damage_sprites = pygame.sprite.Group()
         self.goblin_sprites = pygame.sprite.Group()
@@ -48,8 +51,32 @@ class Level:
                     case 'bg': z = Z_LAYERS['bg tiles']
                     case 'terrain': z = Z_LAYERS['main']
                 Sprite((x * TILE_SIZE,y * TILE_SIZE), surf, groups, z)
-            # sprite is in both all_sprites and collision_sprites
         
+        # objects
+        self.load_objects(tmx_map, level_frames)
+
+    def check_world(self):
+        if not self.data.light_world:
+            self.old_bg_img = self.game.level_frames[str(self.data.level)][0]
+        else:
+            self.old_bg_img = self.game.level_frames[str(self.data.level)][1]
+        self.bg_img = pygame.transform.scale(self.old_bg_img, (WINDOW_WIDTH, WINDOW_HEIGHT))
+
+        for sprite in self.change_sprites:
+            self.all_sprites.remove(sprite)
+            self.collision_sprites.remove(sprite)
+        self.change_sprites.empty()
+
+        if not self.data.light_world:
+            for x, y, surf in self.tmx_map.get_layer_by_name('dark').tiles():
+                groups = [self.all_sprites, self.collision_sprites, self.change_sprites]
+                Sprite((x * TILE_SIZE, y * TILE_SIZE), surf, groups, Z_LAYERS['main'])
+        else:
+            for x, y, surf in self.tmx_map.get_layer_by_name('light').tiles():
+                groups = [self.all_sprites, self.collision_sprites, self.change_sprites]
+                Sprite((x * TILE_SIZE, y * TILE_SIZE), surf, groups, Z_LAYERS['main'])
+        
+    def load_objects(self, tmx_map, level_frames):
         # objects
         for obj in tmx_map.get_layer_by_name('objects'):
             if obj.name == 'player':
@@ -67,9 +94,7 @@ class Level:
         
         # enemies
         for obj in tmx_map.get_layer_by_name('enemies'):
-            self.data.enemy_count += 1 # enemy count is not accurate
-            self.test += 1 
-            print(self.test)
+            self.data.enemy_count += 1
             if obj.name == 'goblin':
                 Goblin((obj.x, obj.y), level_frames['goblin'], (self.all_sprites, self.damage_sprites, self.goblin_sprites), self.collision_sprites, self.data)
             if obj.name == 'gunner':
@@ -87,13 +112,13 @@ class Level:
                     frames = level_frames['crate'],
                     groups = (self.all_sprites, self.collision_sprites, self.crate_sprites),
                     player = self.player,
-                    create_fly = self.create_fly, 
+                    create_fly = self.create_fly,
                     data = self.data)
                 
         # items
         for obj in tmx_map.get_layer_by_name('items'):
             Item(obj.name, (obj.x + TILE_SIZE / 2, obj.y + TILE_SIZE / 2), level_frames['items'][obj.name], (self.all_sprites, self.item_sprites), self.data)
-            if obj.name == 'silver' or obj.name == 'gold':
+            if obj.name == 'silver':
                 self.data.coin_count += 1
 
         # lava
@@ -127,7 +152,7 @@ class Level:
     def hit_collision(self):
         for sprite in self.damage_sprites:
             if sprite.rect.colliderect(self.player.hitbox_rect):
-                self.player.get_damage()
+                #self.player.get_damage()
                 if hasattr(sprite, 'bullet'):
                     sprite.kill()
         
@@ -175,10 +200,28 @@ class Level:
             self.data.level_complete = True
 
     def restart_level(self):
-        # Reinitialize the level
+        # clear all sprites
+        self.all_sprites.empty()
+        self.collision_sprites.empty()
+        self.damage_sprites.empty()
+        self.goblin_sprites.empty()
+        self.gunner_sprites.empty()
+        self.bullet_sprites.empty()
+        self.crate_sprites.empty()
+        self.fly_sprites.empty()
+        self.item_sprites.empty()
+
+        # reinitialize the level
+        self.player = None
+        self.door = None
         self.data.health = self.data.max_health
         self.data.has_diamond = False
-        self.__init__(self.tmx_map, self.level_frames, self.game, self.data)
+        self.data.kills = 0
+        self.data.coins = 0
+        self.data.enemy_count = 0
+        self.data.coin_count = 0
+        
+        self.setup(self.tmx_map, self.level_frames)
         self.player.dead = False
 
     def update(self, dt):
@@ -189,10 +232,12 @@ class Level:
         self.attack_collision()
         self.check_constraint()
         self.check_player()
+        self.check_world()
 
         self.all_sprites.draw(self.player.hitbox_rect.center)
 
     def render(self, display):
+        display.blit(self.bg_img, (0,0))
         self.all_sprites.draw(self.player.hitbox_rect.center)
 
 class Door(pygame.sprite.Sprite):
