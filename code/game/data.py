@@ -5,6 +5,7 @@ class Data:
         self._max_health = 5
         self._health = self._max_health
         self._has_diamond = False
+        self.level = 0
 
         self._enemy_count = 0
         self._kills = 0

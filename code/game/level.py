@@ -17,6 +17,9 @@ class Level:
         self.level_bottom = tmx_map.height * TILE_SIZE
         self.lava_height = 0
 
+        self.old_bg_img = self.game.level_frames[str(self.data.level)][0]
+        self.bg_img = pygame.transform.scale(self.old_bg_img, (WINDOW_WIDTH, WINDOW_HEIGHT))
+
         # groups
         self.all_sprites = AllSprites(
             width = self.level_width,
@@ -53,6 +56,12 @@ class Level:
         self.load_objects(tmx_map, level_frames)
 
     def check_world(self):
+        if not self.data.light_world:
+            self.old_bg_img = self.game.level_frames[str(self.data.level)][0]
+        else:
+            self.old_bg_img = self.game.level_frames[str(self.data.level)][1]
+        self.bg_img = pygame.transform.scale(self.old_bg_img, (WINDOW_WIDTH, WINDOW_HEIGHT))
+
         for sprite in self.change_sprites:
             self.all_sprites.remove(sprite)
             self.collision_sprites.remove(sprite)
@@ -228,6 +237,7 @@ class Level:
         self.all_sprites.draw(self.player.hitbox_rect.center)
 
     def render(self, display):
+        display.blit(self.bg_img, (0,0))
         self.all_sprites.draw(self.player.hitbox_rect.center)
 
 class Door(pygame.sprite.Sprite):

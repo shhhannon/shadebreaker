@@ -1,4 +1,5 @@
 from settings import *
+import importlib
 from states.state import State
 
 class Pause(State):
@@ -36,7 +37,12 @@ class Pause(State):
         if self.pause_options[self.index] == 'RESUME':
             self.exit_state()
         elif self.pause_options[self.index] == 'RESTART':
-            pass
+            for states in range(2):
+                self.game.state_stack.pop()
+            playing_module = importlib.import_module('states.playing')
+            Playing = getattr(playing_module, 'Playing')
+            new_state = Playing(self.game)
+            new_state.enter_state()
         elif self.pause_options[self.index] == 'MENU':
             while len(self.game.state_stack) > 2:
                 self.game.state_stack.pop()
