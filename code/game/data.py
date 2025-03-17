@@ -1,3 +1,5 @@
+from game.timer import Timer
+
 class Data:
     def __init__(self, ui):
         self.ui = ui
@@ -14,9 +16,11 @@ class Data:
 
         self._level_complete = False
         self._light_world = False
+        self._change_timer = Timer(20000)
 
         self.ui.create_hearts(self._max_health, self._health)
         self.ui.create_diamond(self._has_diamond)
+        self.ui.create_bar(self._change_timer)
 
     # ui
     @property
@@ -90,3 +94,13 @@ class Data:
     @light_world.setter
     def light_world(self, value):
         self._light_world = value
+
+    @property
+    def change_timer(self):
+        return self._change_timer
+   
+    # when updating change_timer, the actual value is not updated - need to fix
+    @change_timer.setter
+    def change_timer(self, value):
+        self._change_timer = value
+        self.ui.create_bar(value)

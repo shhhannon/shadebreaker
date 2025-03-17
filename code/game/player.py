@@ -42,8 +42,7 @@ class Player(pygame.sprite.Sprite):
             'wall jump': Timer(300),
             'pre-wall jump': Timer(250),
             'attack block': Timer(500),
-            'hit': Timer(400),
-            'change': Timer(20000)
+            'hit': Timer(400)
         }
 
     def input(self):
@@ -75,10 +74,10 @@ class Player(pygame.sprite.Sprite):
             self.timers['attack block'].activate()
 
     def change(self):
-        if not self.timers['change'].active:
+        if not self.data.change_timer.active:
             self.changing = True
             self.frame_index = 0
-            self.timers['change'].activate()
+            self.data.change_timer.activate()
 
     def move(self, dt):
         # horizontal
@@ -145,6 +144,7 @@ class Player(pygame.sprite.Sprite):
     def update_timers(self):
         for timer in self.timers.values():
             timer.update()
+        self.data.change_timer.update()
 
     def animate(self, dt):
         self.frame_index += ANIMATION_SPEED * dt
