@@ -28,4 +28,4 @@ class Timer:
     def get_time(self):
         if self.active:
             current_time = get_ticks()
-            return current_time - self.start_time
+            return int(current_time - self.start_time)

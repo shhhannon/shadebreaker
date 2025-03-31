@@ -20,7 +20,7 @@ class UI:
         # bar
         self.bar_frames = frames['bar']
         self.bar_sprites = pygame.sprite.Group()
-        self.bar_rect = None # self.bar_frames['bg'][0].get_rect(topleft=(1070, 15))
+        #self.bar_rect = None self.bar_frames['bg'][0].get_rect(topleft=(1070, 15))
         self.bar_width = 2
 
     def create_hearts(self, max_health, health):
@@ -44,19 +44,14 @@ class UI:
         else:
             Diamond((1207, 33), self.diamond_frames['empty'], (self.sprites, self.diamond_sprites))
 
-    def create_bar(self, timer):
-        self.change_timer = timer
+    def create_bar(self, time):
         self.bg_bar = pygame.sprite.Sprite(self.sprites)
         self.bg_bar.image = self.bar_frames['bg'][0]
         self.bg_bar.rect = self.bg_bar.image.get_rect(topleft=(1070, 15))
         for sprite in self.bar_sprites:
             sprite.kill()
-        if not self.change_timer.active:
-            print('full')
-            Bar((1070, 15), self.bar_frames['segment'][0], (self.sprites, self.bar_sprites), 20000)
-        else:
-            #Bar((1070, 15), self.bar_frames['segment'][0], (self.sprites, self.bar_sprites), timer)
-            pass
+        Bar((1074, 15), self.bar_frames['segment'][0], (self.sprites, self.bar_sprites), time)
+
 
     def update(self, dt):
         self.sprites.update(dt)
@@ -77,10 +72,10 @@ class Diamond(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=pos)
 
 class Bar(pygame.sprite.Sprite):
-    def __init__(self, pos, image, groups, timer):
+    def __init__(self, pos, image, groups, time):
         super().__init__(groups)
-        self.image = image
-        #self.change_timer = timer
-        self.bar_width = timer / 20000 * 200
-        self.bar = pygame.transform.scale(self.image,(self.bar_width, 32))
-        self.rect = self.bar.get_rect(topleft=(560, 360))
+        self.sprites, self.bar_sprites = groups
+
+        self.bar_width = time / 20000 * 192
+        self.image = pygame.transform.scale(image,(self.bar_width, 32))
+        self.rect = self.image.get_rect(topleft=pos)

@@ -1,4 +1,4 @@
-from pygame import Surface
+#from pygame import Surface
 from settings import *
 
 class Sprite(pygame.sprite.Sprite):

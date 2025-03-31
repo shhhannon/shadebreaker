@@ -77,7 +77,6 @@ class Player(pygame.sprite.Sprite):
         if not self.data.change_timer.active:
             self.changing = True
             self.frame_index = 0
-            self.data.change_timer.activate()
 
     def move(self, dt):
         # horizontal
@@ -145,6 +144,8 @@ class Player(pygame.sprite.Sprite):
         for timer in self.timers.values():
             timer.update()
         self.data.change_timer.update()
+        self.time = self.data.change_timer.get_time()
+        self.data.update_bar(self.time)
 
     def animate(self, dt):
         self.frame_index += ANIMATION_SPEED * dt
@@ -163,6 +164,7 @@ class Player(pygame.sprite.Sprite):
         if self.changing and self.frame_index > len(self.frames[self.state]):
             self.changing = False
             self.data.light_world = not self.data.light_world
+            self.data.change_timer.activate()
 
     def get_state(self):
         if self.on_surface['floor']:

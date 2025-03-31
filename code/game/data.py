@@ -20,7 +20,7 @@ class Data:
 
         self.ui.create_hearts(self._max_health, self._health)
         self.ui.create_diamond(self._has_diamond)
-        self.ui.create_bar(self._change_timer)
+        self.ui.create_bar(192)
 
     # ui
     @property
@@ -100,7 +100,8 @@ class Data:
         return self._change_timer
    
     # when updating change_timer, the actual value is not updated - need to fix
-    @change_timer.setter
-    def change_timer(self, value):
-        self._change_timer = value
-        self.ui.create_bar(value)
+    def update_bar(self, value):
+        if not self._change_timer.active:
+            self.ui.create_bar(20000)
+        else:
+            self.ui.create_bar(value)
