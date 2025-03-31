@@ -1,5 +1,6 @@
 from settings import *
 from states.state import State
+from states.playing import Playing
 
 class Select(State):
     def __init__(self, game):
@@ -12,6 +13,8 @@ class Select(State):
         self.cursor_rect = pygame.Rect(0, 0, 32, 32)
         self.cursor_pos_x = 300
         self.cursor_rect.x, self.cursor_rect.y = self.cursor_pos_x, WINDOW_HEIGHT/2 + 54
+
+        self.level = 0
 
     def update(self, delta_time, actions):
         self.update_cursor(actions)
@@ -38,8 +41,11 @@ class Select(State):
     
     def transition_state(self):
         if self.select_options[self.index] == 'LEVEL 1':
-            print("1")
+            new_state = Playing(self.game, 0)
+            new_state.enter_state()
         elif self.select_options[self.index] == 'LEVEL 2':
-            print("2")
+            new_state = Playing(self.game, 1)
+            new_state.enter_state()
         elif self.select_options[self.index] == 'LEVEL 3':
-            print("3")
+            new_state = Playing(self.game, 2)
+            new_state.enter_state()

@@ -18,7 +18,10 @@ class Game:
         self.state_stack = []
         self.load_states()
 
-        self.tmx_maps = {0: load_pygame(os.path.join('..', 'shadebreaker', 'data', 'levels', '0.tmx'))}
+        self.tmx_maps = {0: load_pygame(os.path.join('..', 'shadebreaker', 'data', 'levels', '0.tmx')),
+                         1: load_pygame(os.path.join('..', 'shadebreaker', 'data', 'levels', '1.tmx')),
+                         2: load_pygame(os.path.join('..', 'shadebreaker', 'data', 'levels', '2.tmx')),}
+        self.level = 0
 
     def import_assets(self):
         self.level_frames = {

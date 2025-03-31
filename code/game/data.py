@@ -7,17 +7,20 @@ class Data:
         self._max_health = 5
         self._health = self._max_health
         self._has_diamond = False
-        self.level = 0
 
+        # score calculations
         self._enemy_count = 0
         self._kills = 0
         self._coin_count = 0
         self.score = 0
 
+        # level properties
+        self._level = 0
         self._level_complete = False
         self._light_world = False
         self._change_timer = Timer(20000)
 
+        # creating ui features
         self.ui.create_hearts(self._max_health, self._health)
         self.ui.create_diamond(self._has_diamond)
         self.ui.create_bar(192)
@@ -79,6 +82,14 @@ class Data:
   
     
     # level properties
+    @property
+    def level(self):
+        return self._level
+   
+    @level.setter
+    def level(self, value):
+        self._level = value
+
     @property
     def level_complete(self):
         return self._level_complete

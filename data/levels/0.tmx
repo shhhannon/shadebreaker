@@ -128,7 +128,4 @@
  <objectgroup id="6" name="lava">
   <object id="31" name="water" x="0" y="960" width="3840" height="320"/>
  </objectgroup>
- <objectgroup id="7" name="data">
-  <object id="34" name="data" x="0" y="0" width="64" height="64"/>
- </objectgroup>
 </map>

@@ -8,13 +8,14 @@ from game.data import Data
 from game.ui import UI
 
 class Playing(State):
-    def __init__(self, game):
+    def __init__(self, game, level):
         State.__init__(self, game)
+        self.level = level
 
         self.ui = UI(self.game.font, self.game.ui_frames)
         self.data = Data(self.ui)
-            
-        self.current_stage = Level(self.game.tmx_maps[0], self.game.level_frames, self.game, self.data)
+        
+        self.current_stage = Level(self.game.tmx_maps[self.level], self.game.level_frames, self.game, self.data)
     
     def update(self, dt, actions):
         if actions['pause']:
@@ -28,6 +29,5 @@ class Playing(State):
             self.data.level_complete = False
 
     def render(self, display):
-        #display.blit(self.bg_img, (0,0))
         self.current_stage.render(display)
         self.ui.render()

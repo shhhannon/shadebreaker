@@ -1,5 +1,6 @@
-#from pygame import Surface
 from settings import *
+
+#use file to edit enemies.py to make use of OOP more
 
 class Sprite(pygame.sprite.Sprite):
     def __init__(self, pos, surf = pygame.Surface((TILE_SIZE, TILE_SIZE)), groups = None, z = Z_LAYERS['main']):
@@ -8,6 +9,7 @@ class Sprite(pygame.sprite.Sprite):
         self.rect = self.image.get_frect(topleft = pos)
         self.old_rect = self.rect.copy()
         self.z = z
+
 
 class AnimatedSprite(Sprite):
     def __init__(self, pos, frames, groups, z = Z_LAYERS['main'], animation_speed = ANIMATION_SPEED):

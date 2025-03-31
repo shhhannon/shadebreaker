@@ -41,8 +41,7 @@ class Menu(State):
     
     def transition_state(self):
         if self.menu_options[self.index] == 'CONTINUE':
-            pass
-            new_state = Playing(self.game)
+            new_state = Playing(self.game, self.game.level)
             new_state.enter_state()
         elif self.menu_options[self.index] == 'SELECT LEVEL':
             new_state = Select(self.game)
