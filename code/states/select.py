@@ -41,11 +41,10 @@ class Select(State):
     
     def transition_state(self):
         if self.select_options[self.index] == 'LEVEL 1':
-            new_state = Playing(self.game, 0)
-            new_state.enter_state()
+            self.game.level = 0
         elif self.select_options[self.index] == 'LEVEL 2':
-            new_state = Playing(self.game, 1)
-            new_state.enter_state()
+            self.game.level = 1
         elif self.select_options[self.index] == 'LEVEL 3':
-            new_state = Playing(self.game, 2)
-            new_state.enter_state()
+            self.game.level = 2
+        new_state = Playing(self.game, self.game.level)
+        new_state.enter_state()

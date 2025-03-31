@@ -15,7 +15,6 @@ class Data:
         self.score = 0
 
         # level properties
-        self._level = 0
         self._level_complete = False
         self._light_world = False
         self._change_timer = Timer(20000)
@@ -82,13 +81,6 @@ class Data:
   
     
     # level properties
-    @property
-    def level(self):
-        return self._level
-   
-    @level.setter
-    def level(self, value):
-        self._level = value
 
     @property
     def level_complete(self):
@@ -110,7 +102,6 @@ class Data:
     def change_timer(self):
         return self._change_timer
    
-    # when updating change_timer, the actual value is not updated - need to fix
     def update_bar(self, value):
         if not self._change_timer.active:
             self.ui.create_bar(20000)

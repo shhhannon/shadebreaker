@@ -17,7 +17,7 @@ class Level:
         self.level_bottom = tmx_map.height * TILE_SIZE
         self.lava_height = 0
 
-        self.old_bg_img = self.game.level_frames[str(self.data.level)][0]
+        self.old_bg_img = self.game.level_frames[str(self.game.level)][0]
         self.bg_img = pygame.transform.scale(self.old_bg_img, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
         # groups
@@ -57,9 +57,9 @@ class Level:
 
     def check_world(self):
         if not self.data.light_world:
-            self.old_bg_img = self.game.level_frames[str(self.data.level)][0]
+            self.old_bg_img = self.game.level_frames[str(self.game.level)][0]
         else:
-            self.old_bg_img = self.game.level_frames[str(self.data.level)][1]
+            self.old_bg_img = self.game.level_frames[str(self.game.level)][1]
         self.bg_img = pygame.transform.scale(self.old_bg_img, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
         for sprite in self.change_sprites:

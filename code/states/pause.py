@@ -41,7 +41,7 @@ class Pause(State):
                 self.game.state_stack.pop()
             playing_module = importlib.import_module('states.playing')
             Playing = getattr(playing_module, 'Playing')
-            new_state = Playing(self.game)
+            new_state = Playing(self.game, self.game.level)
             new_state.enter_state()
         elif self.pause_options[self.index] == 'MENU':
             while len(self.game.state_stack) > 2:
