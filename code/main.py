@@ -20,7 +20,7 @@ class Game:
 
         self.tmx_maps = {0: load_pygame(os.path.join('..', 'shadebreaker', 'data', 'levels', '0.tmx')),
                          1: load_pygame(os.path.join('..', 'shadebreaker', 'data', 'levels', '1.tmx')),
-                         2: load_pygame(os.path.join('..', 'shadebreaker', 'data', 'levels', '2.tmx')),}
+                         2: load_pygame(os.path.join('..', 'shadebreaker', 'data', 'levels', '2.tmx'))}
         self.level = 0
 
     def import_assets(self):
@@ -33,13 +33,13 @@ class Game:
             'door': import_sub_folders('..', 'shadebreaker', 'graphics', 'level', 'door'),
             'diamond': import_folder('..', 'shadebreaker', 'graphics', 'items', 'diamond'),
             'player': import_sub_folders('..', 'shadebreaker', 'graphics', 'player'),
-            'goblin': import_folder('..', 'shadebreaker', 'graphics', 'enemies', 'goblin', 'run'),
+            'goblin': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'goblin'),
             'gunner': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'gunner'),
             'bullet': import_image('..', 'shadebreaker', 'graphics', 'enemies', 'bullets', 'bullet'),
             'crate': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'crate'),
             'fly': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'fly'),
             'items': import_sub_folders('..', 'shadebreaker', 'graphics', 'items'),
-            'lava': import_image('..', 'shadebreaker', 'graphics', 'level', 'lava', '0'),
+            'lava': import_image('..', 'shadebreaker', 'graphics', 'level', 'lava', '0')
         }
 
         self.ui_frames = {

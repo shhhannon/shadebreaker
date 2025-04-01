@@ -10,30 +10,54 @@ from game.timer import Timer
 class Goblin(pygame.sprite.Sprite):
     def __init__(self, pos, frames, groups, collision_sprites, data):
         super().__init__(groups)
-        self.frames, self.frame_index = frames, 0
-        self.image = self.frames[self.frame_index]
-        self.rect = self.image.get_frect(topleft = pos)
         self.z = Z_LAYERS['main']
         self.data = data
+        self.state = 'run'
+        self.frames, self.frame_index = frames, 0
+        self.image = self.frames[self.state][self.frame_index]
+        self.rect = self.image.get_frect(topleft = pos)
         self.health = 3
 
         self.direction = choice((-1, 1))
         self.collision_rects = [sprite.rect for sprite in collision_sprites]
         self.speed = 150
 
-        self.hit_timer = Timer(250)
+        self.timers = {'reverse': Timer(300), 'hit': Timer(1000)}
+
+    def hit(self):
+        if not self.timers['hit'].active:
+            self.state = 'hit'
+            self.health -= 1
+            self.frame_index = 0
+            self.timers['hit'].activate()
+
+    def die(self):
+        self.state = 'die'
+        if self.state != 'die':
+            self.frame_index = 0
+        if self.frame_index >= 2:
+            self.kill()
+            self.data.kills += 1
 
     def reverse(self):
-        if not self.hit_timer.active:
+        if not self.timers['reverse'].active:
             self.direction *= -1
-            self.hit_timer.activate()
+            self.timers['reverse'].activate()
 
     def update(self, dt):
-        self.hit_timer.update()
+        for timer in self.timers.values():
+            timer.update()
+
+        if self.health <= 0:
+            self.die()
 
         # animate
         self.frame_index += ANIMATION_SPEED * dt
-        self.image = self.frames[int(self.frame_index) % len(self.frames)]
+        if self.frame_index > len(self.frames[self.state]):
+            if self.state == 'hit':
+                self.frame_index = 0
+                self.state = 'run'
+        self.image = self.frames[self.state][int(self.frame_index) % len(self.frames[self.state])]
         self.image = pygame.transform.flip(self.image, True, False) if self.direction < 0 else self.image
 
         # move

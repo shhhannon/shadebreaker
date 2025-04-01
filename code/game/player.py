@@ -42,7 +42,7 @@ class Player(pygame.sprite.Sprite):
             'wall jump': Timer(300),
             'pre-wall jump': Timer(250),
             'attack block': Timer(500),
-            'hit': Timer(400)
+            'hit': Timer(700)
         }
 
     def input(self):

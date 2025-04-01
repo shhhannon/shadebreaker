@@ -1,5 +1,5 @@
 from settings import *
-from game.sprites import Sprite, AnimatedSprite, Item
+from game.sprites import Sprite, Item
 from game.player import Player
 from game.groups import AllSprites
 from game.enemies import Goblin, Gunner, Bullet, Crate, Fly
@@ -152,7 +152,7 @@ class Level:
     def hit_collision(self):
         for sprite in self.damage_sprites:
             if sprite.rect.colliderect(self.player.hitbox_rect):
-                #self.player.get_damage()
+                self.player.get_damage()
                 if hasattr(sprite, 'bullet'):
                     sprite.kill()
         
@@ -173,6 +173,8 @@ class Level:
             facing_target = self.player.rect.centerx < target.rect.centerx and self.player.facing_right or \
                 self.player.rect.centerx > target.rect.centerx and not self.player.facing_right
             if target.rect.colliderect(self.player.rect) and self.player.attacking and facing_target:
+                if target in self.goblin_sprites.sprites():
+                    target.hit()
                 target.reverse()
 
     def check_constraint(self):
