@@ -3,8 +3,9 @@ import importlib
 from states.state import State
 
 class Pause(State):
-    def __init__(self, game, user_data):
+    def __init__(self, game, data, user_data):
         State.__init__(self, game)
+        self.data = data
         self.user_data = user_data
         self.old_image = self.game.level_frames['pause_screen']
         self.image = pygame.transform.scale(self.old_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -36,6 +37,7 @@ class Pause(State):
 
     def transition_state(self):
         if self.pause_options[self.index] == 'RESUME':
+            self.data._game_timer.unpause()
             self.exit_state()
         elif self.pause_options[self.index] == 'RESTART':
             for states in range(2):

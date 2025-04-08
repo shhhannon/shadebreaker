@@ -9,7 +9,7 @@ class Title(State):
         self.old_image = self.game.level_frames['menu_screen']
         self.image = pygame.transform.scale(self.old_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
-    def update(self, delta_time, actions):
+    def update(self, dt, actions):
         if actions['start']:
             new_state = Menu(self.game, self.user_data)
             new_state.enter_state()

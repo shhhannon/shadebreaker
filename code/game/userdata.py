@@ -17,30 +17,7 @@ class UserData:
     def scores(self):
         return self._scores
 
-    @property
-    def score1(self):
-        return self._scores[0]
-        
-    @score1.setter
-    def score1(self, value):
-        self._scores[0] = value
-            
-    @property
-    def score2(self):
-        return self._scores[1]
-        
-    @score2.setter
-    def score2(self, value):
-        self._scores[1] = value
-            
-    @property
-    def score3(self):
-        return self._scores[2]
-        
-    @score3.setter
-    def score3(self, value):
-        self._scores[2] = value
-
+    #@scores.setter
     def update_score(self, score):
         # ensure that the score is being updated for a valid level
         if 0 <= self.level < len(self._scores):

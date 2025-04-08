@@ -3,6 +3,7 @@ from game.sprites import Sprite, Item
 from game.player import Player
 from game.groups import AllSprites
 from game.enemies import Goblin, Gunner, Bullet, Crate, Fly
+from game.timer import Timer
 
 class Level:
     def __init__(self, tmx_map, level_frames, game, data, user_data):
@@ -190,7 +191,7 @@ class Level:
             for health in range(self.data.health):
                 self.player.get_damage()
         if self.player.hitbox_rect.bottom >= self.level_bottom:
-            self.dead = True
+            self.player.dead = True
 
     def check_player(self):
         self.player_centre = self.player.hitbox_rect.center[0]
@@ -214,7 +215,7 @@ class Level:
         self.fly_sprites.empty()
         self.item_sprites.empty()
 
-        # reinitialize the level
+        # reset the level data
         self.player = None
         self.door = None
         self.data.health = self.data.max_health
@@ -223,11 +224,17 @@ class Level:
         self.data.coins = 0
         self.data.enemy_count = 0
         self.data.coin_count = 0
+        self.data.game_timer.activate()
         
         self.setup(self.tmx_map, self.level_frames)
         self.player.dead = False
 
     def update(self, dt):
+        print(self.data.paused)
+        # updating timer
+        self.time = self.data.game_timer.get_time()
+        self.data.update_timer(self.time)
+
         self.all_sprites.update(dt)
         self.bullet_collision()
         self.hit_collision()

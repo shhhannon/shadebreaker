@@ -22,7 +22,8 @@ class Playing(State):
     
     def update(self, dt, actions):
         if actions['pause']:
-            new_state = Pause(self.game, self.user_data)
+            self.data._game_timer.old_time = self.data._game_timer.get_time()
+            new_state = Pause(self.game, self.data, self.user_data)
             new_state.enter_state()
         self.current_stage.update(dt)
         self.ui.update(dt)

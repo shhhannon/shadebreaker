@@ -9,6 +9,10 @@ class Data:
         self._health = self._max_health
         self._has_diamond = False
 
+        # timer
+        self._game_timer = Timer(-1)
+        self._game_timer.activate()
+   
         # score calculations
         self._enemy_count = 0
         self._kills = 0
@@ -16,7 +20,6 @@ class Data:
         self.score = 0
 
         # level properties
-        self._level = 0
         self._level_complete = False
         self._light_world = False
         self._change_timer = Timer(5000)
@@ -25,6 +28,7 @@ class Data:
         self.ui.create_hearts(self._max_health, self._health)
         self.ui.create_diamond(self._has_diamond)
         self.ui.create_bar(192)
+        self.ui.create_timer(0)
 
     # ui
     @property
@@ -48,6 +52,13 @@ class Data:
     def has_diamond(self, value):
         self._has_diamond = value
         self.ui.create_diamond(value)
+
+    @property
+    def game_timer(self):
+        return self._game_timer
+    
+    def update_timer(self, time):
+        self.ui.create_timer(time)
 
     
     # score

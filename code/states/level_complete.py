@@ -17,10 +17,9 @@ class Level_complete(State):
         self.data = data
         self.user_data = user_data
         self.score = self.data.calculate_score()
-        self.game.user_data.update_score(self.score)
+        self.user_data.update_score(self.score)
 
     def update(self, dt, actions):
-        print(self.game.user_data.scores)
         self.update_cursor(actions)
         if actions['start']:
             self.transition_state()
@@ -43,7 +42,13 @@ class Level_complete(State):
 
     def transition_state(self):
         if self.options[self.index] == 'NEXT LEVEL':
-            pass
+            self.user_data.level += 1
+            for states in range(2):
+                self.game.state_stack.pop()
+            playing_module = importlib.import_module('states.playing')
+            Playing = getattr(playing_module, 'Playing')
+            new_state = Playing(self.game, self.user_data.level, self.user_data)
+            new_state.enter_state()
         elif self.options[self.index] == 'RESTART':
             for states in range(2):
                 self.game.state_stack.pop()

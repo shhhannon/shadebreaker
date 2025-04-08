@@ -30,6 +30,7 @@ class Game:
         self.level_frames = {
             'menu_screen': import_image('..', 'shadebreaker', 'graphics', 'level', 'bg', 'menu'),
             'pause_screen': import_image('..', 'shadebreaker', 'graphics', 'level', 'bg', 'pause'),
+            'lock': import_image('..', 'shadebreaker', 'graphics', 'ui', 'lock'),
             '0': import_folder('..', 'shadebreaker', 'graphics', 'level', 'bg', '0'),
             '1': import_folder('..', 'shadebreaker', 'graphics', 'level', 'bg', '1'),
             '2': import_folder('..', 'shadebreaker', 'graphics', 'level', 'bg', '2'),
@@ -50,8 +51,8 @@ class Game:
             'diamond': import_sub_folders('..', 'shadebreaker', 'graphics', 'ui', 'diamonds'),
             'bar': import_sub_folders('..', 'shadebreaker', 'graphics', 'ui', 'switch_bar'),
         }
-        self.font_dir = os.path.join("graphics", "ui", "UIfonts")
-        self.font = pygame.font.Font(os.path.join(self.font_dir, "Krungthep.ttf"), 40)
+        self.font_dir = os.path.join("graphics", "ui")
+        self.font = pygame.font.Font(os.path.join(self.font_dir, "Krungthep.ttf"), 30)
 
     
     def run(self):
@@ -101,12 +102,12 @@ class Game:
         self.prev_time = now
 
     def draw_text(self, surface, text, size, x, y):
-        self.font = pygame.font.Font(os.path.join(self.font_dir, "Krungthep.ttf"), size)
-        text_surface = self.font.render(text, True, (255, 255, 255))
-        text_surface.set_colorkey((0,0,0))
-        text_rect = text_surface.get_frect()
+        self.menu_font = pygame.font.Font(os.path.join(self.font_dir, "Krungthep.ttf"), size)
+        text_surf = self.menu_font.render(text, True, (255, 255, 255))
+        text_surf.set_colorkey((0,0,0))
+        text_rect = text_surf.get_frect()
         text_rect.center = (x, y)
-        surface.blit(text_surface, text_rect)
+        surface.blit(text_surf, text_rect)
 
     def load_states(self):
         self.title_screen = Title(self, self.user_data)
