@@ -3,14 +3,15 @@ from states.state import State
 from states.menu import Menu
 
 class Title(State):
-    def __init__(self, game):
+    def __init__(self, game, user_data):
         State.__init__(self, game)
+        self.user_data = user_data
         self.old_image = self.game.level_frames['menu_screen']
         self.image = pygame.transform.scale(self.old_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
     def update(self, delta_time, actions):
         if actions['start']:
-            new_state = Menu(self.game)
+            new_state = Menu(self.game, self.user_data)
             new_state.enter_state()
     
     def render(self, display):

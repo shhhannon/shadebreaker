@@ -3,8 +3,9 @@ import importlib
 from states.state import State
 
 class Pause(State):
-    def __init__(self, game):
+    def __init__(self, game, user_data):
         State.__init__(self, game)
+        self.user_data = user_data
         self.old_image = self.game.level_frames['pause_screen']
         self.image = pygame.transform.scale(self.old_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
         self.pause_options = {0: 'RESUME', 1: 'RESTART', 2: 'MENU'}
@@ -41,7 +42,7 @@ class Pause(State):
                 self.game.state_stack.pop()
             playing_module = importlib.import_module('states.playing')
             Playing = getattr(playing_module, 'Playing')
-            new_state = Playing(self.game, self.game.level)
+            new_state = Playing(self.game, self.user_data.level, self.user_data)
             new_state.enter_state()
         elif self.pause_options[self.index] == 'MENU':
             while len(self.game.state_stack) > 2:

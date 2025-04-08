@@ -3,10 +3,12 @@ from states.state import State
 from states.playing import Playing
 
 class Select(State):
-    def __init__(self, game):
+    def __init__(self, game, user_data):
         State.__init__(self, game)
+        self.user_data = user_data
         self.old_image = self.game.level_frames['pause_screen']
         self.image = pygame.transform.scale(self.old_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
+
         # set menu options and cursor
         self.select_options = {0: 'LEVEL 1', 1: 'LEVEL 2', 2: 'LEVEL 3'}
         self.index = 0
@@ -41,10 +43,10 @@ class Select(State):
     
     def transition_state(self):
         if self.select_options[self.index] == 'LEVEL 1':
-            self.game.level = 0
+            self.user_data.level = 0
         elif self.select_options[self.index] == 'LEVEL 2':
-            self.game.level = 1
+            self.user_data.level = 1
         elif self.select_options[self.index] == 'LEVEL 3':
-            self.game.level = 2
-        new_state = Playing(self.game, self.game.level)
+            self.user_data.level = 2
+        new_state = Playing(self.game, self.user_data.level, self.user_data)
         new_state.enter_state()

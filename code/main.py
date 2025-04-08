@@ -1,6 +1,7 @@
 from settings import *
 from pytmx.util_pygame import load_pygame
 from states.title import Title
+from game.userdata import UserData
 
 from support import *
 
@@ -11,6 +12,7 @@ class Game:
         pygame.display.set_caption('Shadebreaker')
         self.clock = pygame.time.Clock()
         self.import_assets()
+        self.user_data = UserData()
 
         self.running, self.playing = True, False
         self.actions = {"left": False, "right": False, "up": False, "down": False, "back": False, "start": False, "pause": False}
@@ -21,7 +23,8 @@ class Game:
         self.tmx_maps = {0: load_pygame(os.path.join('..', 'shadebreaker', 'data', 'levels', '0.tmx')),
                          1: load_pygame(os.path.join('..', 'shadebreaker', 'data', 'levels', '1.tmx')),
                          2: load_pygame(os.path.join('..', 'shadebreaker', 'data', 'levels', '2.tmx'))}
-        self.level = 0
+        
+
 
     def import_assets(self):
         self.level_frames = {
@@ -106,7 +109,7 @@ class Game:
         surface.blit(text_surface, text_rect)
 
     def load_states(self):
-        self.title_screen = Title(self)
+        self.title_screen = Title(self, self.user_data)
         self.state_stack.append(self.title_screen)
 
 

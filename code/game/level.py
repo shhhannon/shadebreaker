@@ -5,19 +5,20 @@ from game.groups import AllSprites
 from game.enemies import Goblin, Gunner, Bullet, Crate, Fly
 
 class Level:
-    def __init__(self, tmx_map, level_frames, game, data):
+    def __init__(self, tmx_map, level_frames, game, data, user_data):
         self.display_surface = pygame.display.get_surface()
         self.tmx_map = tmx_map
         self.level_frames = level_frames
         self.game = game
         self.data = data
+        self.user_data = user_data
 
         # level data
         self.level_width = tmx_map.width * TILE_SIZE
         self.level_bottom = tmx_map.height * TILE_SIZE
         self.lava_height = 0
 
-        self.old_bg_img = self.game.level_frames[str(self.game.level)][0]
+        self.old_bg_img = self.game.level_frames[str(self.user_data.level)][0]
         self.bg_img = pygame.transform.scale(self.old_bg_img, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
         # groups
@@ -57,9 +58,9 @@ class Level:
 
     def check_world(self):
         if not self.data.light_world:
-            self.old_bg_img = self.game.level_frames[str(self.game.level)][0]
+            self.old_bg_img = self.game.level_frames[str(self.user_data.level)][0]
         else:
-            self.old_bg_img = self.game.level_frames[str(self.game.level)][1]
+            self.old_bg_img = self.game.level_frames[str(self.user_data.level)][1]
         self.bg_img = pygame.transform.scale(self.old_bg_img, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
         for sprite in self.change_sprites:

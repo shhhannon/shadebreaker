@@ -4,7 +4,7 @@ import importlib
 
 
 class Level_complete(State):
-    def __init__(self, game, data):
+    def __init__(self, game, data, user_data):
         State.__init__(self, game)
         self.old_image = self.game.level_frames['pause_screen']
         self.image = pygame.transform.scale(self.old_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -15,9 +15,12 @@ class Level_complete(State):
         self.cursor_rect.x, self.cursor_rect.y = WINDOW_WIDTH/2 - 140, self.cursor_pos_y + 4
 
         self.data = data
+        self.user_data = user_data
         self.score = self.data.calculate_score()
+        self.game.user_data.update_score(self.score)
 
-    def update(self, delta_time, actions):
+    def update(self, dt, actions):
+        print(self.game.user_data.scores)
         self.update_cursor(actions)
         if actions['start']:
             self.transition_state()
@@ -46,7 +49,7 @@ class Level_complete(State):
                 self.game.state_stack.pop()
             playing_module = importlib.import_module('states.playing')
             Playing = getattr(playing_module, 'Playing')
-            new_state = Playing(self.game, self.game.level)
+            new_state = Playing(self.game, self.user_data.level, self.user_data)
             new_state.enter_state()
         elif self.options[self.index] == 'MENU':
             while len(self.game.state_stack) > 2:

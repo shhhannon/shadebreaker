@@ -7,24 +7,27 @@ from game.level import Level
 from game.data import Data
 from game.ui import UI
 
+
 class Playing(State):
-    def __init__(self, game, level):
+    def __init__(self, game, level, user_data):
         State.__init__(self, game)
         self.level = level
+        self.user_data = user_data
 
         self.ui = UI(self.game.font, self.game.ui_frames)
         self.data = Data(self.ui)
         
-        self.current_stage = Level(self.game.tmx_maps[self.level], self.game.level_frames, self.game, self.data)
+        self.current_stage = Level(self.game.tmx_maps[self.level], self.game.level_frames, self.game, self.data, self.user_data)
+
     
     def update(self, dt, actions):
         if actions['pause']:
-            new_state = Pause(self.game)
+            new_state = Pause(self.game, self.user_data)
             new_state.enter_state()
         self.current_stage.update(dt)
         self.ui.update(dt)
         if self.data.level_complete:
-            new_state = Level_complete(self.game, self.data)
+            new_state = Level_complete(self.game, self.data, self.user_data)
             new_state.enter_state()
             self.data.level_complete = False
 

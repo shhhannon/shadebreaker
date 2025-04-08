@@ -1,5 +1,6 @@
 from game.timer import Timer
 
+# manages level data
 class Data:
     def __init__(self, ui):
         self.ui = ui
@@ -15,9 +16,10 @@ class Data:
         self.score = 0
 
         # level properties
+        self._level = 0
         self._level_complete = False
         self._light_world = False
-        self._change_timer = Timer(20000)
+        self._change_timer = Timer(5000)
 
         # creating ui features
         self.ui.create_hearts(self._max_health, self._health)
@@ -81,7 +83,6 @@ class Data:
   
     
     # level properties
-
     @property
     def level_complete(self):
         return self._level_complete
@@ -104,6 +105,6 @@ class Data:
    
     def update_bar(self, value):
         if not self._change_timer.active:
-            self.ui.create_bar(20000)
+            self.ui.create_bar(5000)
         else:
             self.ui.create_bar(value)

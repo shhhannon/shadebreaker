@@ -5,8 +5,9 @@ from states.select import Select
 from states.instructions import Instructions
 
 class Menu(State):
-    def __init__(self, game):
+    def __init__(self, game, user_data):
         State.__init__(self, game)
+        self.user_data = user_data
         self.old_image = self.game.level_frames['menu_screen']
         self.image = pygame.transform.scale(self.old_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
         # set menu options and cursor
@@ -41,10 +42,10 @@ class Menu(State):
     
     def transition_state(self):
         if self.menu_options[self.index] == 'CONTINUE':
-            new_state = Playing(self.game, self.game.level)
+            new_state = Playing(self.game, self.user_data.level, self.user_data)
             new_state.enter_state()
         elif self.menu_options[self.index] == 'SELECT LEVEL':
-            new_state = Select(self.game)
+            new_state = Select(self.game, self.user_data)
             new_state.enter_state()
         elif self.menu_options[self.index] == 'INSTRUCTIONS':
             new_state = Instructions(self.game)

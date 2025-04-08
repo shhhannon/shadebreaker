@@ -15,12 +15,9 @@ class UI:
         self.diamond_frames = frames['diamond']
         self.diamond_sprites = pygame.sprite.Group()
 
-        # coins ???
-
         # bar
         self.bar_frames = frames['bar']
         self.bar_sprites = pygame.sprite.Group()
-        #self.bar_rect = None self.bar_frames['bg'][0].get_rect(topleft=(1070, 15))
         self.bar_width = 2
 
     def create_hearts(self, max_health, health):
@@ -76,6 +73,6 @@ class Bar(pygame.sprite.Sprite):
         super().__init__(groups)
         self.sprites, self.bar_sprites = groups
 
-        self.bar_width = time / 20000 * 192
+        self.bar_width = time / 5000 * 192
         self.image = pygame.transform.scale(image,(self.bar_width, 32))
         self.rect = self.image.get_rect(topleft=pos)
