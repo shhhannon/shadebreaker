@@ -1,11 +1,8 @@
 from settings import *
 from random import choice
 import math
-from math import sin
 import random
 from game.timer import Timer
-
-# code the goblin health
 
 class Goblin(pygame.sprite.Sprite):
     def __init__(self, pos, frames, groups, collision_sprites, data):
