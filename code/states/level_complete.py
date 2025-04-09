@@ -34,16 +34,15 @@ class Level_complete(State):
     def render(self, display):
         display.blit(self.image, (0,0))
         self.game.draw_text(display, "LEVEL COMPLETE", 72, WINDOW_WIDTH/2, 240)
-        self.points = 0
-        for point in range(3):
-            if self.score[point] == 1:
-                self.points += 1
-        for i in range(3):
-            if self.points > 0:
+ 
+        # draw stars with points first
+        sorted_scores = [1] * self.score.count(1) + [0] * self.score.count(0)
+        for i, score in enumerate(sorted_scores):
+            if score == 1:
                 display.blit(self.star[0], ((WINDOW_WIDTH/2 - 160) + i * 110, 310))
-                self.points -= 1
             else:
                 display.blit(self.star[1], ((WINDOW_WIDTH/2 - 160) + i * 110, 310))
+
         for i, option in self.options.items():
             self.game.draw_text(display, option, 32, WINDOW_WIDTH/2, (WINDOW_HEIGHT/2 + 110) + i * 42)
         self.cursor = self.game.draw_text(display, '*', 32, self.cursor_rect.x, self.cursor_rect.y)
