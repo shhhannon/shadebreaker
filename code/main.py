@@ -24,8 +24,6 @@ class Game:
                          1: load_pygame(os.path.join('..', 'shadebreaker', 'data', 'levels', '1.tmx')),
                          2: load_pygame(os.path.join('..', 'shadebreaker', 'data', 'levels', '2.tmx'))}
         
-
-
     def import_assets(self):
         self.level_frames = {
             'menu_screen': import_image('..', 'shadebreaker', 'graphics', 'level', 'bg', 'menu'),
@@ -43,13 +41,15 @@ class Game:
             'crate': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'crate'),
             'fly': import_sub_folders('..', 'shadebreaker', 'graphics', 'enemies', 'fly'),
             'items': import_sub_folders('..', 'shadebreaker', 'graphics', 'items'),
-            'lava': import_image('..', 'shadebreaker', 'graphics', 'level', 'lava', '0')
+            'lava': import_image('..', 'shadebreaker', 'graphics', 'level', 'lava', '0'),
         }
 
         self.ui_frames = {
             'heart': import_sub_folders('..', 'shadebreaker', 'graphics', 'ui', 'hearts'),
             'diamond': import_sub_folders('..', 'shadebreaker', 'graphics', 'ui', 'diamonds'),
             'bar': import_sub_folders('..', 'shadebreaker', 'graphics', 'ui', 'switch_bar'),
+            'score': import_folder('..', 'shadebreaker', 'graphics', 'ui', 'score'),
+            'star': import_sub_folders('..', 'shadebreaker', 'graphics', 'ui', 'stars'),
         }
         self.font_dir = os.path.join("graphics", "ui")
         self.font = pygame.font.Font(os.path.join(self.font_dir, "Krungthep.ttf"), 30)

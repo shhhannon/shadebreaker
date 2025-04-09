@@ -28,6 +28,7 @@ class Playing(State):
         self.current_stage.update(dt)
         self.ui.update(dt)
         if self.data.level_complete:
+            self.data.total_time = self.data.game_timer.get_time()
             new_state = Level_complete(self.game, self.data, self.user_data)
             new_state.enter_state()
             self.data.level_complete = False

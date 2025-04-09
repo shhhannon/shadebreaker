@@ -15,7 +15,7 @@ class Pause(State):
         self.cursor_pos_y = WINDOW_HEIGHT/2
         self.cursor_rect.x, self.cursor_rect.y = WINDOW_WIDTH/2 - 140, self.cursor_pos_y + 4
 
-    def update(self, delta_time, actions):
+    def update(self, dt, actions):
         self.update_cursor(actions)
         if actions['start']:
             self.transition_state()

@@ -17,7 +17,8 @@ class Data:
         self._enemy_count = 0
         self._kills = 0
         self._coin_count = 0
-        self.score = 0
+        self.score = [0, 0, 0]
+        self.total_time = 0
 
         # level properties
         self._level_complete = False
@@ -86,10 +87,29 @@ class Data:
     def coin_count(self, value):
         self._coin_count = value
 
-    def calculate_score(self):
+    def calculate_score(self, level):
+        self.level = level
+        self.kill_ratio = self.kills / self._enemy_count if self._enemy_count > 0 else 0
+        self.coin_ratio = self.coins / self._coin_count if self._coin_count > 0 else 0
+        # score per level can be calculated with "if self.level == 1" or something similar
+        """
         self.score = int((self._kills/self._enemy_count + self.coins/self._coin_count) * 100)
         if self.score == 0:
             self.score = 0
+        return self.score
+        """
+        # level 1
+        if self.level == 0:
+            self.min_time = 100000
+            self.min_kills = 0.6
+            self.min_coins = 0.2
+        
+        if self.total_time <= self.min_time:
+            self.score[0] = 1
+        if self.kill_ratio >= self.min_kills:
+            self.score[1] = 1
+        if self.coin_ratio >= self.min_coins:
+            self.score[2] = 1
         return self.score
   
     

@@ -230,7 +230,7 @@ class Level:
         self.player.dead = False
 
     def update(self, dt):
-        print(self.data.paused)
+
         # updating timer
         self.time = self.data.game_timer.get_time()
         self.data.update_timer(self.time)

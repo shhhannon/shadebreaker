@@ -20,13 +20,6 @@ class UI:
         self.bar_sprites = pygame.sprite.Group()
         self.bar_width = 2
 
-        # timer 
-        self.secs = 0
-        self.mins = 0
-        self.text = self.font.render(f"{self.mins:02}:{self.secs:02}", False, (224, 236, 212))
-        self.text_rect = self.text.get_frect(topleft=(10, 45))
-        self.display_surface.blit(self.text, self.text_rect)
-
     def create_hearts(self, max_health, health):
         for sprite in self.heart_sprites:
             sprite.kill()
@@ -59,14 +52,15 @@ class UI:
     def create_timer(self, time):
         self.secs = int(time / 1000) % 60
         self.mins = int(time / 60000)
-        self.text = self.font.render(f"{self.mins:02}:{self.secs:02}", False, (224, 236, 212))
+        self.text_surf = self.font.render(f"{self.mins:02}:{self.secs:02}", False, (224, 236, 212))
+        self.text_rect = self.text_surf.get_frect(topleft=(10, 45))
 
     def update(self, dt):
         self.sprites.update(dt)
 
     def render(self):
         self.sprites.draw(self.display_surface)
-        self.display_surface.blit(self.text, self.text_rect)
+        self.display_surface.blit(self.text_surf, self.text_rect)
 
 class Heart(pygame.sprite.Sprite):
     def __init__(self, pos, image, groups):

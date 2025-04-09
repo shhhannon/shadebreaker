@@ -3,7 +3,7 @@
 class UserData:
     def __init__(self):
         self._level = 0
-        self._scores = [0, 0, 0]
+        self._scores = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]  # [time, kills, coins]
 
     @property
     def level(self):
@@ -17,7 +17,6 @@ class UserData:
     def scores(self):
         return self._scores
 
-    #@scores.setter
     def update_score(self, score):
         # ensure that the score is being updated for a valid level
         if 0 <= self.level < len(self._scores):
