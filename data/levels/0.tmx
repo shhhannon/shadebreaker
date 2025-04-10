@@ -116,11 +116,11 @@
  </objectgroup>
  <objectgroup id="5" name="enemies">
   <object id="40" name="gunner" gid="52" x="571.97" y="383.576" width="64" height="64"/>
-  <object id="41" name="goblin" gid="51" x="1472" y="640" width="64" height="64"/>
+  <object id="41" name="goblin" gid="51" x="1856" y="640" width="64" height="64"/>
   <object id="42" name="goblin" gid="51" x="898.303" y="895.636" width="64" height="64"/>
   <object id="43" name="goblin" gid="51" x="1755.88" y="828.97" width="64" height="64"/>
   <object id="44" name="goblin" gid="51" x="1974.06" y="828.97" width="64" height="64"/>
-  <object id="46" name="crate" gid="49" x="2616.28" y="897.06" width="78" height="54"/>
+  <object id="46" name="crate" gid="49" x="1472" y="640" width="78" height="54"/>
   <object id="47" name="gunner" gid="52" x="3007.39" y="832" width="64" height="64"/>
   <object id="58" name="gunner" gid="52" x="2176" y="384" width="64" height="64"/>
  </objectgroup>

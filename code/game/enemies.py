@@ -103,7 +103,7 @@ class Gunner(pygame.sprite.Sprite):
         player_pos, gunner_pos = vector(self.player.hitbox_rect.center), vector(self.rect.center)
         player_near = gunner_pos.distance_to(player_pos) < 640
         player_front = player_pos.x > gunner_pos.x
-        player_level = abs(gunner_pos.y - player_pos.y) < 30
+        player_level = abs(gunner_pos.y - player_pos.y) < 128
 
         if not player_front and not self.reversed:
             self.frames = self.flipped_frames

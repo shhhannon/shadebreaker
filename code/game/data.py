@@ -91,13 +91,7 @@ class Data:
         self.level = level
         self.kill_ratio = self.kills / self._enemy_count if self._enemy_count > 0 else 0
         self.coin_ratio = self.coins / self._coin_count if self._coin_count > 0 else 0
-        # score per level can be calculated with "if self.level == 1" or something similar
-        """
-        self.score = int((self._kills/self._enemy_count + self.coins/self._coin_count) * 100)
-        if self.score == 0:
-            self.score = 0
-        return self.score
-        """
+
         # level 1
         if self.level == 0:
             self.min_time = 100000

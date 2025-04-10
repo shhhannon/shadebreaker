@@ -38,6 +38,7 @@ class Pause(State):
     def transition_state(self):
         if self.pause_options[self.index] == 'RESUME':
             self.data._game_timer.unpause()
+            self.data._change_timer.unpause()
             self.exit_state()
         elif self.pause_options[self.index] == 'RESTART':
             for states in range(2):
