@@ -24,7 +24,7 @@ class Game:
                          1: load_pygame(os.path.join('..', 'shadebreaker', 'data', 'levels', '1.tmx')),
                          2: load_pygame(os.path.join('..', 'shadebreaker', 'data', 'levels', '2.tmx'))}
         
-    def import_assets(self):
+    def import_assets(self): # need to create folder for level backgrounds
         self.level_frames = {
             'menu_screen': import_image('..', 'shadebreaker', 'graphics', 'level', 'bg', 'menu'),
             'pause_screen': import_image('..', 'shadebreaker', 'graphics', 'level', 'bg', 'pause'),
