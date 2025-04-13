@@ -97,7 +97,11 @@ class Level:
         for obj in tmx_map.get_layer_by_name('enemies'):
             self.data.enemy_count += 1
             if obj.name == 'goblin':
-                Goblin((obj.x, obj.y), level_frames['goblin'], (self.all_sprites, self.damage_sprites, self.goblin_sprites), self.collision_sprites, self.data)
+                Goblin(pos =(obj.x, obj.y), 
+                       frames = level_frames['goblin'], 
+                       groups = (self.all_sprites, self.damage_sprites, self.goblin_sprites), 
+                       collision_sprites = self.collision_sprites, 
+                       data = self.data)
             if obj.name == 'gunner':
                 Gunner(
                     pos = (obj.x, obj.y), 

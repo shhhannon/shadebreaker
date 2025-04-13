@@ -94,21 +94,21 @@ class Data:
 
         # level 1
         if self.level == 0:
-            self.min_time = 100000
+            self.min_time = 240000
             self.min_kills = 0.6
-            self.min_coins = 0.4
+            self.min_coins = 0.75
 
         # level 2
         if self.level == 1:
-            self.min_time = 100000
-            self.min_kills = 1
-            self.min_coins = 1
+            self.min_time = 480000
+            self.min_kills = 0.75
+            self.min_coins = 0.8
 
         # level 3
         if self.level == 2:
-            self.min_time = 100000
-            self.min_kills = 1
-            self.min_coins = 1
+            self.min_time = 480000
+            self.min_kills = 0.8
+            self.min_coins = 0.9
         
         if self.total_time <= self.min_time:
             self.score[0] = 1

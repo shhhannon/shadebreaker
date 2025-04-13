@@ -50,13 +50,10 @@ class Item(Sprite):
             for health in range(2):
                 if self.data.health < self.data.max_health:
                     self.data.health += 1
-                    print("health:", self.data.health)
         if self.item_type == 'silver':
             self.data.coins += 1
-            print("coins:", self.data.coins)
         if self.item_type == 'diamond':
             self.data.has_diamond = True
-            print("has diamond?", self.data.has_diamond)
     
     def animate(self, dt):
         self.frame_index += self.animation_speed * dt
