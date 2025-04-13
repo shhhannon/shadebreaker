@@ -4,8 +4,6 @@ import math
 import random
 from game.timer import Timer
 
-# should create state management for all enemies instead of having specific functions changing the state
-
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, pos, frames, groups, data, state='idle', health=1):
         super().__init__(groups)
