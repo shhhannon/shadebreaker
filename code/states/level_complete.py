@@ -1,4 +1,4 @@
-from settings import *
+from constants import *
 from states.state import State
 import importlib
 
@@ -47,9 +47,9 @@ class Level_complete(State):
             self.game.draw_text(display, option, 32, WINDOW_WIDTH/2, (WINDOW_HEIGHT/2 + 110) + i * 42)
         self.cursor = self.game.draw_text(display, '*', 32, self.cursor_rect.x, self.cursor_rect.y)
         if self.preview == True:
-            self.preview_state(display)
+            self.preview_score(display)
 
-    def preview_state(self, display):
+    def preview_score(self, display):
         display.blit(self.image, (0,0))
         self.game.draw_text(display, "LEVEL COMPLETE", 72, WINDOW_WIDTH/2, 240)
         self.secs = int(self.data.total_time / 1000) % 60
@@ -94,3 +94,4 @@ class Level_complete(State):
             elif self.options[self.index] == 'MENU':
                 while len(self.game.state_stack) > 2:
                     self.game.state_stack.pop()
+

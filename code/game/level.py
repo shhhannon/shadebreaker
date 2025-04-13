@@ -1,7 +1,6 @@
-from settings import *
-from game.sprites import Sprite, Item
+from constants import *
+from game.sprites import AllSprites, Sprite, Item
 from game.player import Player
-from game.groups import AllSprites
 from game.enemies import Goblin, Gunner, Bullet, Crate, Fly
 from game.timer import Timer
 
@@ -154,7 +153,7 @@ class Level:
     def hit_collision(self):
         for sprite in self.damage_sprites:
             if sprite.rect.colliderect(self.player.hitbox_rect):
-                self.player.get_damage()
+                #self.player.get_damage()
                 if hasattr(sprite, 'bullet'):
                     sprite.kill()
         
@@ -165,19 +164,13 @@ class Level:
                 item_sprites[0].activate()
 
     def attack_collision(self):
-        for target in self.crate_sprites.sprites() + self.fly_sprites.sprites() + self.gunner_sprites.sprites():
+        for target in self.crate_sprites.sprites() + self.fly_sprites.sprites() + self.gunner_sprites.sprites() + self.goblin_sprites.sprites():
             facing_target = self.player.rect.centerx < target.rect.centerx and self.player.facing_right or \
                 self.player.rect.centerx > target.rect.centerx and not self.player.facing_right
             if target.rect.colliderect(self.player.rect) and self.player.attacking and facing_target:
                 target.hit()
-
-        for target in self.goblin_sprites.sprites() + self.bullet_sprites.sprites():
-            facing_target = self.player.rect.centerx < target.rect.centerx and self.player.facing_right or \
-                self.player.rect.centerx > target.rect.centerx and not self.player.facing_right
-            if target.rect.colliderect(self.player.rect) and self.player.attacking and facing_target:
                 if target in self.goblin_sprites.sprites():
-                    target.hit()
-                target.reverse()
+                    target.reverse()
 
     def check_constraint(self):
         # left right
@@ -243,8 +236,6 @@ class Level:
         self.check_constraint()
         self.check_player()
         self.check_world()
-
-        self.all_sprites.draw(self.player.hitbox_rect.center)
 
     def render(self, display):
         display.blit(self.bg_img, (0,0))

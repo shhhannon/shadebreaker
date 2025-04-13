@@ -1,4 +1,4 @@
-from settings import *
+from constants import *
 from states.state import State
 from states.pause import Pause
 from states.level_complete import Level_complete
@@ -21,7 +21,6 @@ class Playing(State):
 
     
     def update(self, dt, actions):
-        print(self.data.change_timer.get_time())
         if actions['pause']:
             self.data._game_timer.old_time = self.data._game_timer.get_time()
             self.data._change_timer.old_time = self.data._change_timer.get_time()

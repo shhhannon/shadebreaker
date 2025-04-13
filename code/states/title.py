@@ -1,4 +1,4 @@
-from settings import *
+from constants import *
 from states.state import State
 from states.menu import Menu
 

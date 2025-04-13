@@ -181,7 +181,7 @@
  </layer>
  <objectgroup id="3" name="objects">
   <object id="1" name="player" gid="5" x="896" y="1472" width="64" height="64"/>
-  <object id="2" name="door" gid="2" x="1608.52" y="1666.55" width="115" height="139"/>
+  <object id="2" name="door" gid="2" x="1792" y="1664" width="115" height="139"/>
  </objectgroup>
  <objectgroup id="9" name="items">
   <object id="4" name="diamond" gid="54" x="1246.59" y="1409.34" width="64" height="64"/>

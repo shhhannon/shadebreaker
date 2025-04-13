@@ -1,16 +1,15 @@
-from settings import *
+from constants import *
 from pytmx.util_pygame import load_pygame
 from states.title import Title
 from game.userdata import UserData
 
-from support import *
+from imports import *
 
 class Game:
     def __init__(self):
         pygame.init()
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption('Shadebreaker')
-        self.clock = pygame.time.Clock()
         self.import_assets()
         self.user_data = UserData()
 
@@ -24,13 +23,13 @@ class Game:
                          1: load_pygame(os.path.join('..', 'shadebreaker', 'data', 'levels', '1.tmx')),
                          2: load_pygame(os.path.join('..', 'shadebreaker', 'data', 'levels', '2.tmx'))}
         
-    def import_assets(self):
+    def import_assets(self): # need to create folder for level backgrounds
         self.level_frames = {
             'menu_screen': import_image('..', 'shadebreaker', 'graphics', 'level', 'bg', 'menu'),
             'pause_screen': import_image('..', 'shadebreaker', 'graphics', 'level', 'bg', 'pause'),
             'lock': import_image('..', 'shadebreaker', 'graphics', 'ui', 'lock'),
-            '0': import_folder('..', 'shadebreaker', 'graphics', 'level', 'bg', '0'),
-            '1': import_folder('..', 'shadebreaker', 'graphics', 'level', 'bg', '1'),
+            '1': import_folder('..', 'shadebreaker', 'graphics', 'level', 'bg', '0'),
+            '0': import_folder('..', 'shadebreaker', 'graphics', 'level', 'bg', '1'),
             '2': import_folder('..', 'shadebreaker', 'graphics', 'level', 'bg', '2'),
             'door': import_sub_folders('..', 'shadebreaker', 'graphics', 'level', 'door'),
             'diamond': import_folder('..', 'shadebreaker', 'graphics', 'items', 'diamond'),

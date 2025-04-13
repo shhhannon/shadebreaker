@@ -1,4 +1,4 @@
-from settings import *
+from constants import *
 import importlib
 from states.state import State
 

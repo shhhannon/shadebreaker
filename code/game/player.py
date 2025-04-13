@@ -1,4 +1,4 @@
-from settings import *
+from constants import *
 from os.path import join
 from math import sin
 
@@ -49,11 +49,11 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed() #gives all currently pressed keys
         input_vector = vector(0,0)
         if not self.timers['wall jump'].active:
-            if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            if keys[pygame.K_RIGHT]:
                 input_vector.x += 1
                 self.facing_right = True
 
-            if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+            if keys[pygame.K_LEFT]:
                 input_vector.x -= 1
                 self.facing_right = False
             self.direction.x = input_vector.normalize().x if input_vector else input_vector.x
@@ -61,7 +61,7 @@ class Player(pygame.sprite.Sprite):
             if keys[pygame.K_x]:
                 self.attack()
 
-        if keys[pygame.K_UP] or keys[pygame.K_w]:
+        if keys[pygame.K_UP]:
             self.jump = True
 
         if keys[pygame.K_c]:

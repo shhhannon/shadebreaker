@@ -26,4 +26,5 @@ class Timer:
             return int(current_time - self.start_time)
         
     def unpause(self):
-        self.start_time = get_ticks() - self.old_time
+        if self.old_time != None:
+            self.start_time = get_ticks() - self.old_time
