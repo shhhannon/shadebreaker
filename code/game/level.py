@@ -122,7 +122,12 @@ class Level:
                 
         # items
         for obj in tmx_map.get_layer_by_name('items'):
-            Item(obj.name, (obj.x + TILE_SIZE / 2, obj.y + TILE_SIZE / 2), level_frames['items'][obj.name], (self.all_sprites, self.item_sprites), self.data)
+            Item(
+                name = obj.name, 
+                pos = (obj.x + TILE_SIZE / 2, obj.y + TILE_SIZE / 2), 
+                frames = level_frames['items'][obj.name], 
+                groups = (self.all_sprites, self.item_sprites), 
+                data = self.data)
             if obj.name == 'silver':
                 self.data.coin_count += 1
 

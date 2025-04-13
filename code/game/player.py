@@ -129,7 +129,6 @@ class Player(pygame.sprite.Sprite):
                     elif self.hitbox_rect.right >= sprite.rect.left and int(self.old_rect.right) <= int(sprite.old_rect.left):
                         self.hitbox_rect.right = sprite.rect.left
         
-                # collision method
                 else: # vertical
                     # top collision
                     if self.hitbox_rect.top <= sprite.rect.bottom and int(self.old_rect.top) >= int(sprite.old_rect.bottom):
@@ -138,7 +137,7 @@ class Player(pygame.sprite.Sprite):
                     # bottom collision
                     elif self.hitbox_rect.bottom >= sprite.rect.top and int(self.old_rect.bottom) <= int(sprite.old_rect.top):
                         self.hitbox_rect.bottom = sprite.rect.top
-                    self.direction.y = 0 # stop falling - new line of code
+                    self.direction.y = 0 
 
     def update_timers(self):
         for timer in self.timers.values():
